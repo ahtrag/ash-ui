@@ -176,6 +176,7 @@ const stylesList = {
   bgSapphire: "bgSapphire",
   bgSalomie: "bgSalomie",
   bgTomato: "bgTomato",
+  bgTransparent: "bgTransparent",
   bgVenetianRed: "bgVenetianRed",
   bgVenetianRed2: "bgVenetianRed2",
   bgVidaLoca: "bgVidaLoca",
@@ -296,6 +297,21 @@ const colors = {
 };
 
 const useGlobalStyles = createUseStyles({
+  // Default Styles
+  "@global": {
+    "*": {
+      margin: 0,
+      padding: 0,
+      border: "none",
+      fontFamily: "'Roboto', sans-serif",
+      listStyle: "none",
+      textDecoration: "none"
+    },
+    body: {
+      backgroundColor: "#F5F5F5"
+    }
+  },
+
   //Container
   container: {
     [breakpoints.only("xs")]: {
@@ -1474,6 +1490,9 @@ const useGlobalStyles = createUseStyles({
   bgTomato: {
     backgroundColor: colors.tomato
   },
+  bgTransparent: {
+    backgroundColor: "transparent"
+  },
   //V
   bgVenetianRed: {
     backgroundColor: colors.venetianRed
@@ -1607,4 +1626,4 @@ const useGlobalStyles = createUseStyles({
   }
 });
 
-export { stylesList, useGlobalStyles };
+export { stylesList, colors, useGlobalStyles };

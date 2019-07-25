@@ -1,18 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
-import { useGlobalStyles } from "../../utils/styles";
 import { createRipple } from "../../utils/constants";
 
 const useStyles = createUseStyles({
-  button: {
+  iconButton: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    padding: "16px 32px",
+    height: 50,
+    width: 50,
+    borderRadius: "50%",
     cursor: "pointer",
     overflow: "hidden",
+    backgroundColor: "transparent",
+    transition: "background-color 0.3s ease-in-out",
     "&:focus": {
       outline: "none"
     },
@@ -21,9 +24,6 @@ const useStyles = createUseStyles({
         backgroundColor: "rgba(0, 0, 0, 0.1)"
       }
     }
-  },
-  outline: {
-    border: "1px solid #9a7ba8"
   },
   rippleRoot: {
     position: "absolute",
@@ -34,26 +34,15 @@ const useStyles = createUseStyles({
   }
 });
 
-const ButtonView = props => {
-  const { children, type, variant, className, style, onClick } = props;
-  const styles = useGlobalStyles();
+const IconButtonView = props => {
+  const { children, className, style, onClick } = props;
   const classes = useStyles();
-
-  const defaultStyles = [
-    classes.button,
-    variant === "outlined" ? classes.outline : "",
-    variant === "contained" ? styles.clWhite : styles.clBlack,
-    variant === "contained" ? styles.shadowLower : "",
-    variant === "contained" ? styles.gradAsh : styles.bgTransparent,
-    styles.rounded,
-    className
-  ]
+  const defaultStyles = [classes.iconButton, className]
     .filter(value => Boolean(value))
     .join(" ");
 
   return (
     <button
-      type={type}
       className={defaultStyles}
       style={style}
       onClick={e => {
@@ -67,30 +56,8 @@ const ButtonView = props => {
   );
 };
 
-ButtonView.defaultProps = {
-  type: "button",
-  variant: "contained",
-  className: ""
-};
-
-ButtonView.propTypes = {
-  children: PropTypes.any.isRequired,
-
-  /**
-   * Type of the Button:
-   * 1. button
-   * 2. submit
-   * 3. reset
-   */
-  type: PropTypes.oneOf(["button", "submit", "reset"]),
-
-  /**
-   * Variant of the Button:
-   * 1. contained
-   * 2. outlined
-   * 3. text
-   */
-  variant: PropTypes.oneOf(["contained", "outlined", "text"]),
+IconButtonView.propTypes = {
+  children: PropTypes.element.isRequired,
 
   /**
    * Override default styles with className
@@ -108,4 +75,4 @@ ButtonView.propTypes = {
   onClick: PropTypes.func
 };
 
-export default ButtonView;
+export default IconButtonView;

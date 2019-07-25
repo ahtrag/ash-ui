@@ -6,14 +6,17 @@ import { useGlobalStyles } from "../../utils/styles";
 const PaperView = props => {
   const { children, className, style, elevation } = props;
   const styles = useGlobalStyles();
+  const defaultStyles = [
+    styles.bgWhite,
+    styles.rounded,
+    styles[`shadow${_.startCase(_.lowerCase(elevation))}`],
+    className
+  ]
+    .filter(value => Boolean(value))
+    .join(" ");
 
   return (
-    <div
-      className={`${styles.bgWhite} ${styles.rounded} ${
-        styles[`shadow${_.startCase(_.lowerCase(elevation))}`]
-      } ${className}`}
-      style={style}
-    >
+    <div className={defaultStyles} style={style}>
       {children}
     </div>
   );
@@ -30,8 +33,25 @@ PaperView.propTypes = {
     PropTypes.arrayOf(PropTypes.element),
     PropTypes.element
   ]).isRequired,
+
+  /**
+   * Override default styles with className
+   */
   className: PropTypes.string,
+
+  /**
+   * Override default styles with inline style
+   */
   style: PropTypes.object,
+
+  /**
+   * Type of Paper Elevation:
+   * 1. lower
+   * 2. low
+   * 3. mid
+   * 4. top
+   * 5. upper
+   */
   elevation: PropTypes.oneOf(["lower", "low", "mid", "top", "upper"])
 };
 
