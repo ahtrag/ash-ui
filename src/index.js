@@ -1,15 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
-import Auth from "./pages/Auth";
-import Todo from "./pages/Todo";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import App from "./App";
 
 ReactDOM.render(
   <Router>
     <Switch>
-      <Route path="/" component={Auth} exact />
-      <Route path="/todo" component={Todo} exact />
+      <Route path="/" component={App} exact />
     </Switch>
   </Router>,
   document.getElementById("root")
