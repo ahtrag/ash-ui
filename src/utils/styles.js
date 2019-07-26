@@ -1,5 +1,3 @@
-import { createUseStyles } from "react-jss";
-
 const stylesList = {
   container: "container",
   imgResponsiveWidth: "imgResponsiveWidth",
@@ -296,7 +294,7 @@ const colors = {
   yellowGreen: "#7ed321"
 };
 
-const useGlobalStyles = createUseStyles({
+const globalStyles = {
   // Default Styles
   "@global": {
     "*": {
@@ -1624,6 +1622,6 @@ const useGlobalStyles = createUseStyles({
     background:
       "linear-gradient(to right, #480048, #C04848)" /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   }
-});
+};
 
-export { stylesList, colors, useGlobalStyles };
+export { stylesList, colors, globalStyles };
