@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import { createUseStyles } from "react-jss";
-import { useGlobalStyles } from "../../utils/styles";
+import { globalStyles } from "../../utils/styles";
 
 const useStyles = createUseStyles({
   switch: {
@@ -32,6 +32,8 @@ const useStyles = createUseStyles({
     left: "calc(100% - 30px)"
   }
 });
+
+const useGlobalStyles = createUseStyles(globalStyles);
 
 const SwitchView = props => {
   const { switchValues, active, onSwitch, noLabel, className, style } = props;
@@ -81,7 +83,7 @@ const SwitchView = props => {
   );
 };
 
-SwitchView.propTypes = {
+SwitchView.defaultProps = {
   noLabel: false,
   className: ""
 };

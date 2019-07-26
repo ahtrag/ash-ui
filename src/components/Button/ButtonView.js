@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
-import { useGlobalStyles } from "../../utils/styles";
+import { globalStyles } from "../../utils/styles";
 import { createRipple } from "../../utils/constants";
 
 const useStyles = createUseStyles({
@@ -33,6 +33,8 @@ const useStyles = createUseStyles({
     width: "100%"
   }
 });
+
+const useGlobalStyles = createUseStyles(globalStyles);
 
 const ButtonView = props => {
   const { children, type, variant, className, style, onClick } = props;

@@ -1,7 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
-import { useGlobalStyles } from "../../utils/styles";
+import { globalStyles } from "../../utils/styles";
+import { createUseStyles } from "react-jss";
+
+const useGlobalStyles = createUseStyles(globalStyles);
 
 const PaperView = props => {
   const { children, className, style, elevation } = props;
