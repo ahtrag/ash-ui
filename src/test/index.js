@@ -1,12 +1,7 @@
 import React from "react";
-import AppBar from "../components/AppBar";
 
-const test = props => {
-  return (
-    <div>
-      <AppBar title="Title" profile="Profile" isShow />
-    </div>
-  );
+const Test = props => {
+  return <div />;
 };
 
-export default test;
+export default Test;
