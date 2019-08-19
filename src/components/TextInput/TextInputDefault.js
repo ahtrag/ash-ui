@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
 
@@ -7,7 +7,8 @@ const useStyles = createUseStyles({
     marginTop: 16,
     marginBottom: 4,
     display: "inline-flex",
-    position: "relative"
+    position: "relative",
+    borderBottom: "1px solid #ddd"
   },
   inputField: {
     position: "absolute",
@@ -38,9 +39,9 @@ const useStyles = createUseStyles({
     transition: "transform 0.3s ease-in-out"
   },
   focusInputLabel: {
-    transform: "translate(5px, -14px) scale(0.8)"
+    transform: "translate(-3px, -8px) scale(0.8)"
   },
-  select: {
+  input: {
     position: "relative",
     backgroundColor: "transparent",
     minWidth: 125,
@@ -57,31 +58,24 @@ const useStyles = createUseStyles({
   }
 });
 
-const SelectView = props => {
+const TextInputDefault = props => {
   const {
-    children,
-    value,
-    onChange,
-    fullWidth,
     label,
+    value,
     id,
     name,
+    placeholder,
+    type,
     className,
-    style
+    style,
+    onChange,
+    fullWidth
   } = props;
+  const [focus, setFocus] = useState(false);
   const classes = useStyles();
-  const defaultStyles = [classes.select, classes.fullWidth, className]
+  const defaultStyles = [classes.input, classes.fullWidth, className]
     .filter(value => Boolean(value))
     .join(" ");
-  const [focus, setFocus] = useState(false);
-  const [labelWidth, setLabelWidth] = useState(0);
-  const labelRef = useRef(null);
-
-  useEffect(() => {
-    if (labelRef.current) {
-      setLabelWidth(labelRef.current.getBoundingClientRect().width);
-    }
-  }, [labelRef]);
 
   return (
     <div
@@ -89,17 +83,7 @@ const SelectView = props => {
         fullWidth ? ` ${classes.fullWidth}` : ""
       }`}
     >
-      <fieldset className={classes.inputField}>
-        <legend
-          className={classes.inputLegend}
-          style={{ width: label && (focus || value) ? labelWidth : "" }}
-        >
-          &#8203;
-        </legend>
-      </fieldset>
-
       <label
-        ref={labelRef}
         htmlFor={id}
         className={`${classes.inputLabel} ${
           focus || value ? classes.focusInputLabel : ""
@@ -108,36 +92,41 @@ const SelectView = props => {
         {label}
       </label>
 
-      <select
-        className={defaultStyles}
+      <input
+        type={type}
+        placeholder={!label ? placeholder : focus ? placeholder : ""}
+        value={value}
         id={id}
         name={name}
+        className={defaultStyles}
         style={style}
         onChange={onChange}
-        value={value}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
-      >
-        {children}
-      </select>
+      />
     </div>
   );
 };
 
-SelectView.defaultProps = {
+TextInputDefault.defaultProps = {
+  type: "text",
+  className: "",
   fullWidth: false
 };
 
-SelectView.propTypes = {
-  children: PropTypes.any.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  onChange: PropTypes.func,
-  fullWidth: PropTypes.bool,
+TextInputDefault.propTypes = {
   label: PropTypes.string,
+  value: PropTypes.string,
   id: PropTypes.string,
   name: PropTypes.string,
+  placeholder: PropTypes.string,
+  type: PropTypes.oneOf(["text", "email", "password"]),
   className: PropTypes.string,
-  style: PropTypes.object
+  style: PropTypes.object,
+  onChange: PropTypes.func,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+  fullWidth: PropTypes.bool
 };
 
-export default SelectView;
+export default TextInputDefault;

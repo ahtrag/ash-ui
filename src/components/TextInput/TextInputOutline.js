@@ -40,7 +40,7 @@ const useStyles = createUseStyles({
   focusInputLabel: {
     transform: "translate(5px, -14px) scale(0.8)"
   },
-  select: {
+  input: {
     position: "relative",
     backgroundColor: "transparent",
     minWidth: 125,
@@ -57,25 +57,26 @@ const useStyles = createUseStyles({
   }
 });
 
-const SelectView = props => {
+const TextInputOutline = props => {
   const {
-    children,
-    value,
-    onChange,
-    fullWidth,
     label,
+    value,
     id,
     name,
+    placeholder,
+    type,
     className,
-    style
+    style,
+    onChange,
+    fullWidth
   } = props;
-  const classes = useStyles();
-  const defaultStyles = [classes.select, classes.fullWidth, className]
-    .filter(value => Boolean(value))
-    .join(" ");
   const [focus, setFocus] = useState(false);
   const [labelWidth, setLabelWidth] = useState(0);
   const labelRef = useRef(null);
+  const classes = useStyles();
+  const defaultStyles = [classes.input, classes.fullWidth, className]
+    .filter(value => Boolean(value))
+    .join(" ");
 
   useEffect(() => {
     if (labelRef.current) {
@@ -108,36 +109,41 @@ const SelectView = props => {
         {label}
       </label>
 
-      <select
-        className={defaultStyles}
+      <input
+        type={type}
+        placeholder={!label ? placeholder : focus ? placeholder : ""}
+        value={value}
         id={id}
         name={name}
+        className={defaultStyles}
         style={style}
         onChange={onChange}
-        value={value}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
-      >
-        {children}
-      </select>
+      />
     </div>
   );
 };
 
-SelectView.defaultProps = {
+TextInputOutline.defaultProps = {
+  type: "text",
+  className: "",
   fullWidth: false
 };
 
-SelectView.propTypes = {
-  children: PropTypes.any.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  onChange: PropTypes.func,
-  fullWidth: PropTypes.bool,
+TextInputOutline.propTypes = {
   label: PropTypes.string,
+  value: PropTypes.string,
   id: PropTypes.string,
   name: PropTypes.string,
+  placeholder: PropTypes.string,
+  type: PropTypes.oneOf(["text", "email", "password"]),
   className: PropTypes.string,
-  style: PropTypes.object
+  style: PropTypes.object,
+  onChange: PropTypes.func,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+  fullWidth: PropTypes.bool
 };
 
-export default SelectView;
+export default TextInputOutline;
