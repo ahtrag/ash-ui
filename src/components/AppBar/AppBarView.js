@@ -33,7 +33,7 @@ const useStyles = createUseStyles({
 const useGlobalStyles = createUseStyles(globalStyles);
 
 const AppBarView = props => {
-  const { title, className, isOpen, isShow } = props;
+  const { title, className, style, isOpen, isShow, profile } = props;
   const classes = useGlobalStyles();
   const styles = useStyles();
   const [state, setState] = useState({
@@ -51,22 +51,20 @@ const AppBarView = props => {
     .join(" ");
 
   return (
-    <div className={styles.grow}>
-      <div className={defaultStyles}>
-        <div className={styles.justifyRight}>
-          {state.isShow ? (
-            <IconButton
-              className={styles.button}
-              onClick={() => setState({ ...state, isOpen: !isOpen })}
-            >
-              <MenuIcon />
-            </IconButton>
-          ) : null}
-          <p>{title}</p>
-        </div>
-        <div>
-          <p>Profile</p>
-        </div>
+    <div className={defaultStyles} style={style}>
+      <div className={styles.justifyRight}>
+        {state.isShow ? (
+          <IconButton
+            className={styles.button}
+            onClick={() => setState({ ...state, isOpen: !isOpen })}
+          >
+            <MenuIcon />
+          </IconButton>
+        ) : null}
+        <p>{title}</p>
+      </div>
+      <div>
+        <p>Hi, {profile}</p>
       </div>
     </div>
   );
@@ -81,7 +79,22 @@ AppBarView.propTypes = {
   /**
    * AppBar title
    */
-  title: PropTypes.string
+  title: PropTypes.string,
+
+  /**
+   * AppBar profile
+   */
+  profile: PropTypes.string,
+
+  /**
+   * Override default styles with className
+   */
+  className: PropTypes.string,
+
+  /**
+   * Override default styles with inline style
+   */
+  style: PropTypes.object
 };
 
 export default AppBarView;

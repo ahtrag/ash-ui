@@ -4,7 +4,7 @@ import AppBar from "../components/AppBar";
 const test = props => {
   return (
     <div>
-      <AppBar title="Title" isShow />
+      <AppBar title="Title" profile="Profile" isShow />
     </div>
   );
 };
