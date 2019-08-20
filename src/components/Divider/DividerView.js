@@ -62,7 +62,17 @@ DividerView.propTypes = {
    * 2. inset
    * 3. middle
    */
-  variant: PropTypes.oneOf(["fullWidth", "inset", "middle"])
+  variant: PropTypes.oneOf(["fullWidth", "inset", "middle"]),
+
+  /**
+   * Override default styles with className
+   */
+  className: PropTypes.string,
+
+  /**
+   * Override default styles with inline style
+   */
+  style: PropTypes.object
 };
 
 export default DividerView;
