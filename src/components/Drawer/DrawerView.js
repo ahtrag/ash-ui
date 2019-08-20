@@ -1,10 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
-import IconButton from "../IconButton";
 import ChevronLeftIcon from "mdi-react/ChevronLeftIcon";
 import { createRipple } from "../../utils/constants";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+//component
+import IconButton from "../IconButton";
+import Divider from "../Divider";
 
 const width = 240;
 
@@ -84,12 +87,15 @@ const DrawerView = props => {
       <div className={styles.menuList}>
         {menuList
           ? menuList.map(menu => (
-              <NavLink to={menu.ref}>
-                <div className={styles.menu}>
-                  {menu.icon} &nbsp; &nbsp;
-                  {menu.label}
-                </div>
-              </NavLink>
+              <div>
+                <Link to={menu.to} key={menu.label}>
+                  <div className={styles.menu}>
+                    {menu.icon} &nbsp; &nbsp;
+                    {menu.label}
+                  </div>
+                </Link>
+                {menu.divider ? <Divider /> : null}
+              </div>
             ))
           : null}
       </div>
@@ -115,11 +121,12 @@ DrawerView.propTypes = {
 
   /**
    * MenuList for navigation require array of object :
-   * 1. icon  : element of icon
-   * 2. label : string of navigation label
-   * 3. ref   : string of route
+   * 1. icon    : element of icon
+   * 2. label   : string of navigation label
+   * 3. to      : string of route
+   * 4. divider : boolean of divider
    */
-  menuList: PropTypes.arrayOf(PropTypes.element)
+  menuList: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default DrawerView;

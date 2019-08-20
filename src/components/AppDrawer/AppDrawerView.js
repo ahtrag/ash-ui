@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
-import IconButton from "../IconButton";
+import IconButton from "../IconButton/IconButtonView";
 import MenuIcon from "mdi-react/MenuIcon";
-import Drawer from "../Drawer";
+import Drawer from "../Drawer/DrawerView";
 
 const drawerWidth = 240;
 
@@ -46,6 +46,10 @@ const useStyles = createUseStyles({
     display: "flex",
     flex: 1,
     alignItems: "center"
+  },
+  content: {
+    display: "flex",
+    margin: "24px"
   }
 });
 
@@ -104,7 +108,7 @@ const AppBarView = props => {
             <p>Hi, {profile}</p>
           </div>
         </div>
-        {children}
+        <div className={classes.content}>{children}</div>
       </div>
     </div>
   );
@@ -143,11 +147,12 @@ AppBarView.propTypes = {
 
   /**
    * MenuList for navigation require array of object :
-   * 1. icon  : element of icon
-   * 2. label : string of navigation label
-   * 3. ref   : string of route
+   * 1. icon    : element of icon
+   * 2. label   : string of navigation label
+   * 3. to      : string of route
+   * 4. divider : boolean of divider
    */
-  menuList: PropTypes.arrayOf(PropTypes.element)
+  menuList: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default AppBarView;

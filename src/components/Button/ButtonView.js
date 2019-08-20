@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
-import { globalStyles } from "../../utils/styles";
 import { createRipple } from "../../utils/constants";
 
 const useStyles = createUseStyles({
@@ -31,23 +30,38 @@ const useStyles = createUseStyles({
     left: 0,
     height: "100%",
     width: "100%"
+  },
+  clWhite: {
+    color: "white"
+  },
+  clBlack: {
+    color: "black"
+  },
+  shadowLower: {
+    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)"
+  },
+  gradAsh: {
+    background: "linear-gradient(to right, #3f4c6b, #606c88)"
+  },
+  bgTransparent: {
+    backgroundColor: "transparent"
+  },
+  rounded: {
+    borderRadius: 8
   }
 });
 
-const useGlobalStyles = createUseStyles(globalStyles);
-
 const ButtonView = props => {
   const { children, type, variant, className, style, onClick } = props;
-  const styles = useGlobalStyles();
   const classes = useStyles();
 
   const defaultStyles = [
     classes.button,
     variant === "outlined" ? classes.outline : "",
-    variant === "contained" ? styles.clWhite : styles.clBlack,
-    variant === "contained" ? styles.shadowLower : "",
-    variant === "contained" ? styles.gradAsh : styles.bgTransparent,
-    styles.rounded,
+    variant === "contained" ? classes.clWhite : classes.clBlack,
+    variant === "contained" ? classes.shadowLower : "",
+    variant === "contained" ? classes.gradAsh : classes.bgTransparent,
+    classes.rounded,
     className
   ]
     .filter(value => Boolean(value))
