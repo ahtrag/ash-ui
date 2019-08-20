@@ -36,7 +36,7 @@ const useStyles = createUseStyles({
     paddingRight: "24px",
     paddingLeft: "24px",
     direction: "column",
-    zIndex: 1200
+    zIndex: 10
   },
   button: {
     marginRight: "24px",
@@ -53,7 +53,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const AppBarView = props => {
+const AppDrawerView = props => {
   const {
     title,
     className,
@@ -114,12 +114,12 @@ const AppBarView = props => {
   );
 };
 
-AppBarView.defaultProps = {
+AppDrawerView.defaultProps = {
   showMenu: false,
   isOpen: false
 };
 
-AppBarView.propTypes = {
+AppDrawerView.propTypes = {
   /**
    * AppBar title
    */
@@ -143,7 +143,11 @@ AppBarView.propTypes = {
   /**
    * Children would be wrapped as content
    */
-  children: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  children: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element)
+  ]),
 
   /**
    * MenuList for navigation require array of object :
@@ -155,4 +159,4 @@ AppBarView.propTypes = {
   menuList: PropTypes.arrayOf(PropTypes.object)
 };
 
-export default AppBarView;
+export default AppDrawerView;
