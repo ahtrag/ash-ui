@@ -2,5 +2,5 @@
   "name": "AppBar",
   "version": "0.0.0",
   "private": true,
-  "main": "AppBarView.js"
+  "main": "AppDrawerView.js"
 }
