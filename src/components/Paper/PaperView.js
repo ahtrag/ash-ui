@@ -1,18 +1,36 @@
 import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
-import { globalStyles } from "../../utils/styles";
 import { createUseStyles } from "react-jss";
 
-const useGlobalStyles = createUseStyles(globalStyles);
+const useStyles = createUseStyles({
+  root: {
+    backgroundColor: "white",
+    borderRadius: 8
+  },
+  shadowLower: {
+    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)"
+  },
+  shadowLow: {
+    boxShadow: "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)"
+  },
+  shadowMid: {
+    boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)"
+  },
+  shadowTop: {
+    boxShadow: "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)"
+  },
+  shadowUpper: {
+    boxShadow: "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)"
+  }
+});
 
 const PaperView = props => {
   const { children, className, style, elevation } = props;
-  const styles = useGlobalStyles();
+  const classes = useStyles();
   const defaultStyles = [
-    styles.bgWhite,
-    styles.rounded,
-    styles[`shadow${_.startCase(_.lowerCase(elevation))}`],
+    classes.root,
+    classes[`shadow${_.startCase(_.lowerCase(elevation))}`],
     className
   ]
     .filter(value => Boolean(value))

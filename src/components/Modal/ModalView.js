@@ -1,7 +1,11 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
+  root: {
+    display: "flex"
+  },
   modalWrapper: {
     position: "fixed",
     height: "100%",
@@ -14,7 +18,7 @@ const useStyles = createUseStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    transition: " opacity 0.8s ease-in-out, visibility 0.8s ease-in-out"
+    transition: "opacity 0.8s ease-in-out, visibility 0.8s ease-in-out"
   },
   show: {
     opacity: 1,
@@ -36,100 +40,105 @@ const useStyles = createUseStyles({
     backgroundColor: "whitesmoke",
     transform: "translateY(-100vh)",
     transition: "transform 0.5s ease-in-out",
-    width: "50%"
+    width: "50%",
+    boxShadow: "10px 5px 35px 0px rgba(0,0,0, 0.43)",
+    borderRadius: "8px"
   },
   modalHeader: {
-    background: "#263238",
-    height: "40px",
-    lineHeight: "40px",
-    padding: "5px 20px",
-    textAlign: "right",
-
-    "& h3": {
-      color: "white",
-      float: "left",
-      margin: 0,
-      padding: 0
-    }
-  },
-  headerText: {
-    color: "white",
-    float: "left",
+    flex: "0 0 auto",
     margin: 0,
-    padding: 0
+    padding: "16px 24px",
+    boxSizing: "inherit",
+    display: "block",
+    color: "rgba(0,0,0,0.87)"
   },
   modalBody: {
-    padding: "10px 15px",
-    textAlign: "center",
-    overflowY: "auto",
-    height: "300px"
+    flex: "1 1 auto",
+    padding: "8px 24px",
+    overflow: "auto",
+    boxSizing: "inherit",
+    display: "block"
   },
   modalFooter: {
-    background: "#263238",
-    height: "35px",
-    padding: "15px"
-  },
-  buttonCancel: {
-    backgroundColor: "#b71c1c",
-    float: "left",
-    border: "none",
-    color: "white",
-    cursor: "pointer",
-    fontWeight: "bold",
-    outline: "none",
-    padding: "10px"
-  },
-  buttonSubmit: {
-    backgroundColor: "seagreen",
-    float: "right",
-    border: "none",
-    color: "white",
-    cursor: "pointer",
-    fontWeight: "bold",
-    outline: "none",
-    padding: "10px"
-  },
-  closeModalButton: {
-    color: "white",
-    cursor: "pointer",
-    float: "right",
-    fontSize: "30px",
-    margin: 0,
-
-    "&:hover": {
-      color: "black"
-    }
+    flex: "0 0 auto",
+    display: "flex",
+    padding: "8px",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    boxSizing: "inherit"
   }
 });
 
 const ModalView = props => {
+  const { className, style, show, close, children, header, footer } = props;
   const classes = useStyles();
+
+  const defaultStyles = [classes.root, className]
+    .filter(value => Boolean(value))
+    .join(" ");
+
   return (
-    <div
-      className={`${classes.modalWrapper} ${props.show ? classes.show : ""}`}
-    >
-      <div className={classes.overlay} />
-      <div className={classes.modal}>
-        <div className={classes.modalHeader}>
-          <h3 className={classes.headerText}>Add Notes</h3>
-          <span className={classes.closeModalButton} onClick={props.close}>
-            ×
-          </span>
-        </div>
-        <div className={classes.modalBody}>
-          <div>{props.children}</div>
-        </div>
-        <div className={classes.modalFooter}>
-          <button className={classes.buttonCancel} onClick={props.close}>
-            Close
-          </button>
-          <button className={classes.buttonSubmit} onClick={props.submit}>
-            Submit
-          </button>
+    <div className={defaultStyles}>
+      <div
+        className={`${classes.modalWrapper}${show ? ` ${classes.show}` : ""}`}
+      >
+        <div className={classes.overlay} onClick={close} />
+        <div className={classes.modal} style={style}>
+          <div className={classes.modalHeader}>{header}</div>
+          <div className={classes.modalBody}>
+            <div>{children}</div>
+          </div>
+          <div className={classes.modalFooter}>{footer}</div>
         </div>
       </div>
     </div>
   );
+};
+
+ModalView.defaultStyles = {};
+
+ModalView.propTypes = {
+  /**
+   * Header of Modal
+   */
+  header: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.element),
+    PropTypes.element
+  ]),
+
+  /**
+   * Content of Modal
+   */
+  children: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.element),
+    PropTypes.element
+  ]).isRequired,
+
+  /**
+   * Header of Modal
+   */
+  footer: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.element),
+    PropTypes.element
+  ]),
+
+  /**
+   * Function close modal onClick overlay
+   */
+  close: PropTypes.func,
+
+  /**
+   * Override default styles with className
+   */
+  className: PropTypes.string,
+
+  /**
+   * Override default styles with inline style
+   */
+  style: PropTypes.object
 };
 
 export default ModalView;
