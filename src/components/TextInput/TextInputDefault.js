@@ -6,6 +6,7 @@ const useStyles = createUseStyles({
   inputWrapper: {
     marginTop: 16,
     marginBottom: 4,
+    padding: 8,
     display: "inline-flex",
     position: "relative",
     borderBottom: "1px solid #ddd"
@@ -30,28 +31,34 @@ const useStyles = createUseStyles({
   },
   inputLabel: {
     position: "absolute",
-    top: 0,
-    left: 0,
+    top: 8,
+    left: 8,
     zIndex: 5,
-    transform: "translate(7px, 15px) scale(1)",
+    transform: "scale(1)",
     cursor: "pointer",
-    padding: 8,
-    transition: "transform 0.3s ease-in-out"
+    transition:
+      "transform 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out"
   },
   focusInputLabel: {
-    transform: "translate(-3px, -8px) scale(0.8)"
+    transform: "scale(0.8)",
+    top: -15,
+    left: 2
   },
   input: {
     position: "relative",
     backgroundColor: "transparent",
     minWidth: 125,
     width: "100%",
-    marginTop: 8,
-    padding: "16px 8px",
     border: 0,
     "&:focus": {
       outline: "none"
     }
+  },
+  extraStart: {
+    display: "flex",
+    marginRight: 16,
+    alignItems: "center",
+    justifyContent: "center"
   },
   fullWidth: {
     width: "100%"
@@ -66,12 +73,13 @@ const TextInputDefault = props => {
     name,
     placeholder,
     type,
+    extra,
     className,
     style,
     onChange,
     fullWidth
   } = props;
-  const [focus, setFocus] = useState(false);
+  const [focus, setFocus] = useState(extra && extra.start ? true : false);
   const classes = useStyles();
   const defaultStyles = [classes.input, classes.fullWidth, className]
     .filter(value => Boolean(value))
@@ -83,6 +91,9 @@ const TextInputDefault = props => {
         fullWidth ? ` ${classes.fullWidth}` : ""
       }`}
     >
+      {extra && extra.start && (
+        <div className={classes.extraStart}>{extra.start}</div>
+      )}
       <label
         htmlFor={id}
         className={`${classes.inputLabel} ${
@@ -101,8 +112,8 @@ const TextInputDefault = props => {
         className={defaultStyles}
         style={style}
         onChange={onChange}
-        onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}
+        onFocus={() => (extra && extra.start ? null : setFocus(true))}
+        onBlur={() => (extra && extra.start ? null : setFocus(false))}
       />
     </div>
   );
@@ -121,6 +132,10 @@ TextInputDefault.propTypes = {
   name: PropTypes.string,
   placeholder: PropTypes.string,
   type: PropTypes.oneOf(["text", "email", "password"]),
+  extra: PropTypes.shape({
+    start: PropTypes.element,
+    end: PropTypes.element
+  }),
   className: PropTypes.string,
   style: PropTypes.object,
   onChange: PropTypes.func,

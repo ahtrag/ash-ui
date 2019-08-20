@@ -17,7 +17,7 @@ const TextInputView = props => {
 };
 
 TextInputView.defaultProps = {
-  variant: "outline"
+  variant: "default"
 };
 
 TextInputView.propTypes = {
@@ -28,6 +28,10 @@ TextInputView.propTypes = {
   placeholder: PropTypes.string,
   variant: PropTypes.oneOf(["outline", "default"]),
   type: PropTypes.oneOf(["text", "email", "password"]),
+  extra: PropTypes.shape({
+    start: PropTypes.element,
+    end: PropTypes.element
+  }),
   className: PropTypes.string,
   style: PropTypes.object,
   onChange: PropTypes.func,

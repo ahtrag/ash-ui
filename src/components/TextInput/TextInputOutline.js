@@ -65,6 +65,7 @@ const TextInputOutline = props => {
     name,
     placeholder,
     type,
+    extra,
     className,
     style,
     onChange,
@@ -138,6 +139,10 @@ TextInputOutline.propTypes = {
   name: PropTypes.string,
   placeholder: PropTypes.string,
   type: PropTypes.oneOf(["text", "email", "password"]),
+  extra: PropTypes.shape({
+    start: PropTypes.element,
+    end: PropTypes.element
+  }),
   className: PropTypes.string,
   style: PropTypes.object,
   onChange: PropTypes.func,
