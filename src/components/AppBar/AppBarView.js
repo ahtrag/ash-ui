@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { globalStyles } from "../../utils/styles";
 import { createUseStyles } from "react-jss";
 import IconButton from "../IconButton";
 import MenuIcon from "mdi-react/MenuIcon";
@@ -9,6 +8,10 @@ import Drawer from "../Drawer";
 const drawerWidth = 240;
 
 const useStyles = createUseStyles({
+  defaultColor: {
+    background: "linear-gradient(to right, #3f4c6b, #606c88)",
+    color: "white"
+  },
   root: {
     display: "flex"
   },
@@ -46,8 +49,6 @@ const useStyles = createUseStyles({
   }
 });
 
-const useGlobalStyles = createUseStyles(globalStyles);
-
 const AppBarView = props => {
   const {
     title,
@@ -59,39 +60,39 @@ const AppBarView = props => {
     children,
     menuList
   } = props;
-  const classes = useGlobalStyles();
-  const styles = useStyles();
-  const [state, setState] = useState({
-    isOpen,
-    showMenu
-  });
+  const classes = useStyles();
 
   const defaultStyles = [
-    classes.gradAsh,
+    classes.defaultColor,
     classes.clWhite,
-    styles.appBar,
+    classes.appBar,
     className
   ]
     .filter(value => Boolean(value))
     .join(" ");
 
+  const [state, setState] = useState({
+    isOpen,
+    showMenu
+  });
+
   return (
-    <div className={styles.root}>
+    <div className={classes.root}>
       <Drawer
         isOpen={state.isOpen}
         onClose={() => setState({ ...state, isOpen: false })}
         menuList={menuList}
       />
       <div
-        className={`${styles.appWraper} ${
-          state.isOpen ? styles.drawerOpen : styles.drawerClose
+        className={`${classes.appWraper} ${
+          state.isOpen ? classes.drawerOpen : classes.drawerClose
         }`}
       >
         <div className={defaultStyles} style={style}>
-          <div className={styles.justifyRight}>
+          <div className={classes.justifyRight}>
             {state.showMenu && !state.isOpen ? (
               <IconButton
-                className={styles.button}
+                className={classes.button}
                 onClick={() => setState({ ...state, isOpen: !state.isOpen })}
               >
                 <MenuIcon />
@@ -118,12 +119,12 @@ AppBarView.propTypes = {
   /**
    * AppBar title
    */
-  title: PropTypes.string,
+  title: PropTypes.string.isRequired,
 
   /**
    * AppBar profile
    */
-  profile: PropTypes.string,
+  profile: PropTypes.string.isRequired,
 
   /**
    * Override default styles with className
