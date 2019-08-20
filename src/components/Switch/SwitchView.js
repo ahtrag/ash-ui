@@ -2,9 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import { createUseStyles } from "react-jss";
-import { globalStyles } from "../../utils/styles";
 
 const useStyles = createUseStyles({
+  root: {
+    display: "flex",
+    alignItems: "center"
+  },
   switch: {
     margin: "0 16px",
     position: "relative",
@@ -21,6 +24,7 @@ const useStyles = createUseStyles({
     backgroundColor: "#B4BABF",
     cursor: "pointer",
     transition: "left 0.3s ease-in-out",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
     "&:focus": {
       outline: "none"
     }
@@ -30,28 +34,36 @@ const useStyles = createUseStyles({
   },
   switchButtonRight: {
     left: "calc(100% - 30px)"
+  },
+  gradAsh: {
+    background: "linear-gradient(to right, #3f4c6b, #606c88)"
+  },
+  clDeepSkyBlue: {
+    color: "#00a1ff"
+  },
+  clGrey2: {
+    color: "#838383"
+  },
+  txtCenter: {
+    textAlign: "center"
   }
 });
-
-const useGlobalStyles = createUseStyles(globalStyles);
 
 const SwitchView = props => {
   const { switchValues, active, onSwitch, noLabel, className, style } = props;
   const activeIndex = switchValues.indexOf(active);
   const classes = useStyles();
-  const styles = useGlobalStyles();
-
-  const defaultStyles = [classes.switch, styles.gradAsh, className]
+  const defaultStyles = [classes.switch, classes.gradAsh, className]
     .filter(value => Boolean(value))
     .join(" ");
 
   return (
-    <div className={`${styles.disFlex} ${styles.aiCenter}`}>
+    <div className={classes.root}>
       {noLabel ? null : (
         <h4
           className={`${
-            activeIndex === 0 ? styles.clDeepSkyBlue : styles.clGrey2
-          } ${styles.txtCenter}`}
+            activeIndex === 0 ? classes.clDeepSkyBlue : classes.clGrey2
+          } ${classes.txtCenter}`}
         >
           {_.startCase(_.lowerCase(switchValues[0]))}
         </h4>
@@ -63,7 +75,7 @@ const SwitchView = props => {
             activeIndex === 0
               ? classes.switchButtonLeft
               : classes.switchButtonRight
-          } ${styles.shadowLower}`}
+          }`}
           onClick={() =>
             onSwitch(activeIndex === 0 ? switchValues[1] : switchValues[0])
           }
@@ -73,8 +85,8 @@ const SwitchView = props => {
       {noLabel ? null : (
         <h4
           className={`${
-            activeIndex === 1 ? styles.clDeepSkyBlue : styles.clGrey2
-          } ${styles.txtCenter}`}
+            activeIndex === 1 ? classes.clDeepSkyBlue : classes.clGrey2
+          } ${classes.txtCenter}`}
         >
           {_.startCase(_.lowerCase(switchValues[1]))}
         </h4>
