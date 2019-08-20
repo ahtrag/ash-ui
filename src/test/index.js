@@ -1,4 +1,5 @@
 import React from "react";
+<<<<<<< HEAD
 import Paper from "../components/Paper";
 import TextInput from "../components/TextInput";
 import Icon from "../components/Icon";
@@ -37,6 +38,19 @@ const Test = props => {
           />
         </div>
       </Paper> */}
+=======
+import AppBar from "../components/AppBar";
+import { globalStyles } from "../utils/styles";
+import { createUseStyles } from "react-jss";
+
+const useGlobalStyles = createUseStyles(globalStyles);
+
+const Test = props => {
+  const styles = useGlobalStyles();
+  return (
+    <div>
+      <AppBar title="Title" profile="Profile" showMenu />
+>>>>>>> 90c30db1588ce1fd009e5e9c242b9f8d6404021b
     </div>
   );
 };

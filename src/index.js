@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Test from "./Test";
-require("react-web-vector-icons/fonts");
 
 ReactDOM.render(
   <Router>
