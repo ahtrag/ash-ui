@@ -25,7 +25,7 @@ const useStyles = createUseStyles({
     top: -10,
     left: -8
   },
-  input: {
+  select: {
     position: "relative",
     backgroundColor: "transparent",
     minWidth: 125,
@@ -40,13 +40,13 @@ const useStyles = createUseStyles({
   },
   extraStart: {
     display: "flex",
-    marginRight: 8,
+    marginRight: 16,
     alignItems: "center",
     justifyContent: "center"
   },
   extraEnd: {
     display: "flex",
-    marginLeft: 8,
+    marginLeft: 16,
     alignItems: "center",
     justifyContent: "center"
   },
@@ -55,25 +55,24 @@ const useStyles = createUseStyles({
   }
 });
 
-const TextInputDefault = props => {
+const SelectDefault = props => {
   const {
-    label,
+    children,
     value,
+    extra,
+    fullWidth,
+    label,
     id,
     name,
-    placeholder,
-    type,
-    extra,
-    className,
-    style,
     onChange,
-    fullWidth
+    className,
+    style
   } = props;
-  const [focus, setFocus] = useState(extra && extra.start ? true : false);
   const classes = useStyles();
-  const defaultStyles = [classes.input, classes.fullWidth, className]
+  const defaultStyles = [classes.select, classes.fullWidth, className]
     .filter(value => Boolean(value))
     .join(" ");
+  const [focus, setFocus] = useState(extra && extra.start ? true : false);
 
   return (
     <div
@@ -92,18 +91,18 @@ const TextInputDefault = props => {
       >
         {label}
       </label>
-      <input
-        type={type}
-        placeholder={!label ? placeholder : focus ? placeholder : ""}
-        value={value}
+      <select
+        className={defaultStyles}
         id={id}
         name={name}
-        className={defaultStyles}
         style={style}
         onChange={onChange}
+        value={value}
         onFocus={() => (extra && extra.start ? null : setFocus(true))}
         onBlur={() => (extra && extra.start ? null : setFocus(false))}
-      />
+      >
+        {children}
+      </select>
       {extra && extra.end && (
         <div className={classes.extraEnd}>{extra.end}</div>
       )}
@@ -111,21 +110,20 @@ const TextInputDefault = props => {
   );
 };
 
-TextInputDefault.propTypes = {
-  label: PropTypes.string,
-  value: PropTypes.string,
-  id: PropTypes.string,
-  name: PropTypes.string,
-  placeholder: PropTypes.string,
-  type: PropTypes.oneOf(["text", "email", "password"]),
+SelectDefault.propTypes = {
+  children: PropTypes.any,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   extra: PropTypes.shape({
     start: PropTypes.element,
     end: PropTypes.element
   }),
-  className: PropTypes.string,
-  style: PropTypes.object,
+  fullWidth: PropTypes.bool,
+  label: PropTypes.string,
+  id: PropTypes.string,
+  name: PropTypes.string,
   onChange: PropTypes.func,
-  fullWidth: PropTypes.bool
+  className: PropTypes.string,
+  style: PropTypes.object
 };
 
-export default TextInputDefault;
+export default SelectDefault;

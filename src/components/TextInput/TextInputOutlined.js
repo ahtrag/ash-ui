@@ -30,7 +30,7 @@ const useStyles = createUseStyles({
   inputLabel: {
     position: "absolute",
     top: 16,
-    left: 48,
+    left: 8,
     zIndex: 5,
     transform: "scale(1)",
     cursor: "pointer",
@@ -46,7 +46,10 @@ const useStyles = createUseStyles({
     position: "relative",
     backgroundColor: "transparent",
     minWidth: 125,
+    minHeight: 50,
     width: "100%",
+    padding: 8,
+    boxSizing: "border-box",
     border: 0,
     "&:focus": {
       outline: "none"
@@ -55,13 +58,13 @@ const useStyles = createUseStyles({
   extraStart: {
     display: "flex",
     marginLeft: 8,
-    marginRight: 16,
+    marginRight: 8,
     alignItems: "center",
     justifyContent: "center"
   },
   extraEnd: {
     display: "flex",
-    marginLeft: 16,
+    marginLeft: 8,
     alignItems: "center",
     justifyContent: "center"
   },
@@ -70,7 +73,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const TextInputOutline = props => {
+const TextInputOutlined = props => {
   const {
     label,
     value,
@@ -95,8 +98,12 @@ const TextInputOutline = props => {
   useEffect(() => {
     if (labelRef.current) {
       setLabelWidth(labelRef.current.getBoundingClientRect().width);
+
+      if (extra && extra.start) {
+        setFocus(true);
+      }
     }
-  }, [labelRef]);
+  }, [labelRef, extra]);
 
   return (
     <div
@@ -134,8 +141,8 @@ const TextInputOutline = props => {
         className={defaultStyles}
         style={style}
         onChange={onChange}
-        onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}
+        onFocus={() => (extra && extra.start ? null : setFocus(true))}
+        onBlur={() => (extra && extra.start ? null : setFocus(false))}
       />
       {extra && extra.end && (
         <div className={classes.extraEnd}>{extra.end}</div>
@@ -144,13 +151,7 @@ const TextInputOutline = props => {
   );
 };
 
-TextInputOutline.defaultProps = {
-  type: "text",
-  className: "",
-  fullWidth: false
-};
-
-TextInputOutline.propTypes = {
+TextInputOutlined.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   id: PropTypes.string,
@@ -164,9 +165,7 @@ TextInputOutline.propTypes = {
   className: PropTypes.string,
   style: PropTypes.object,
   onChange: PropTypes.func,
-  onFocus: PropTypes.func,
-  onBlur: PropTypes.func,
   fullWidth: PropTypes.bool
 };
 
-export default TextInputOutline;
+export default TextInputOutlined;

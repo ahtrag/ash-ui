@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import TextInputDefault from "./TextInputDefault";
-import TextInputOutline from "./TextInputOutline";
+import TextInputOutlined from "./TextInputOutlined";
 
 const TextInputView = props => {
   const { variant, ...inputProps } = props;
@@ -9,15 +9,17 @@ const TextInputView = props => {
   switch (variant) {
     case "default":
       return <TextInputDefault {...inputProps} />;
-    case "outline":
-      return <TextInputOutline {...inputProps} />;
+    case "outlined":
+      return <TextInputOutlined {...inputProps} />;
     default:
       return <TextInputDefault {...inputProps} />;
   }
 };
 
 TextInputView.defaultProps = {
-  variant: "default"
+  variant: "default",
+  fullWidth: false,
+  type: "text"
 };
 
 TextInputView.propTypes = {
@@ -26,7 +28,7 @@ TextInputView.propTypes = {
   id: PropTypes.string,
   name: PropTypes.string,
   placeholder: PropTypes.string,
-  variant: PropTypes.oneOf(["outline", "default"]),
+  variant: PropTypes.oneOf(["outlined", "default"]),
   type: PropTypes.oneOf(["text", "email", "password"]),
   extra: PropTypes.shape({
     start: PropTypes.element,
