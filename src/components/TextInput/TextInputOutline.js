@@ -24,33 +24,46 @@ const useStyles = createUseStyles({
     padding: 0,
     margin: 0,
     width: 0.1,
-    lineHeight: "10px",
+    lineHeight: 0,
     transition: "width 0.3s ease-in-out"
   },
   inputLabel: {
     position: "absolute",
-    top: 0,
-    left: 0,
+    top: 16,
+    left: 48,
     zIndex: 5,
-    transform: "translate(7px, 15px) scale(1)",
+    transform: "scale(1)",
     cursor: "pointer",
-    padding: 8,
-    transition: "transform 0.3s ease-in-out"
+    transition:
+      "transform 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out"
   },
   focusInputLabel: {
-    transform: "translate(5px, -14px) scale(0.8)"
+    transform: "scale(0.8)",
+    top: -10,
+    left: 8
   },
   input: {
     position: "relative",
     backgroundColor: "transparent",
     minWidth: 125,
     width: "100%",
-    marginTop: 8,
-    padding: "16px 8px",
     border: 0,
     "&:focus": {
       outline: "none"
     }
+  },
+  extraStart: {
+    display: "flex",
+    marginLeft: 8,
+    marginRight: 16,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  extraEnd: {
+    display: "flex",
+    marginLeft: 16,
+    alignItems: "center",
+    justifyContent: "center"
   },
   fullWidth: {
     width: "100%"
@@ -100,6 +113,9 @@ const TextInputOutline = props => {
         </legend>
       </fieldset>
 
+      {extra && extra.start && (
+        <div className={classes.extraStart}>{extra.start}</div>
+      )}
       <label
         ref={labelRef}
         htmlFor={id}
@@ -109,7 +125,6 @@ const TextInputOutline = props => {
       >
         {label}
       </label>
-
       <input
         type={type}
         placeholder={!label ? placeholder : focus ? placeholder : ""}
@@ -122,6 +137,9 @@ const TextInputOutline = props => {
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
       />
+      {extra && extra.end && (
+        <div className={classes.extraEnd}>{extra.end}</div>
+      )}
     </div>
   );
 };

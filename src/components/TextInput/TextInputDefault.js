@@ -6,7 +6,6 @@ const useStyles = createUseStyles({
   inputWrapper: {
     marginTop: 16,
     marginBottom: 4,
-    padding: 8,
     display: "inline-flex",
     position: "relative",
     borderBottom: "1px solid #ddd"
@@ -42,7 +41,7 @@ const useStyles = createUseStyles({
   focusInputLabel: {
     transform: "scale(0.8)",
     top: -15,
-    left: 2
+    left: -8
   },
   input: {
     position: "relative",
@@ -57,6 +56,12 @@ const useStyles = createUseStyles({
   extraStart: {
     display: "flex",
     marginRight: 16,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  extraEnd: {
+    display: "flex",
+    marginLeft: 16,
     alignItems: "center",
     justifyContent: "center"
   },
@@ -102,7 +107,6 @@ const TextInputDefault = props => {
       >
         {label}
       </label>
-
       <input
         type={type}
         placeholder={!label ? placeholder : focus ? placeholder : ""}
@@ -115,6 +119,9 @@ const TextInputDefault = props => {
         onFocus={() => (extra && extra.start ? null : setFocus(true))}
         onBlur={() => (extra && extra.start ? null : setFocus(false))}
       />
+      {extra && extra.end && (
+        <div className={classes.extraEnd}>{extra.end}</div>
+      )}
     </div>
   );
 };
