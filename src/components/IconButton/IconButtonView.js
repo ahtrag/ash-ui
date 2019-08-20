@@ -61,7 +61,7 @@ IconButtonView.propTypes = {
   /**
    * Name of the icon
    */
-  children: PropTypes.element.isRequired,
+  children: PropTypes.string.isRequired,
 
   /**
    * Styles of the icon
