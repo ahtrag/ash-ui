@@ -47,7 +47,7 @@ const useStyles = createUseStyles({
     backgroundColor: "transparent"
   },
   rounded: {
-    borderRadius: 8
+    borderRadius: 4
   }
 });
 
@@ -85,7 +85,7 @@ const ButtonView = props => {
 
 ButtonView.defaultProps = {
   type: "button",
-  variant: "contained",
+  variant: "text",
   className: ""
 };
 
