@@ -3,7 +3,6 @@ import AppDrawer from "../components/AppDrawer";
 import { globalStyles } from "../utils/styles";
 import { createUseStyles } from "react-jss";
 import MenuIcon from "mdi-react/MenuIcon";
-import Button from "../components/Button";
 
 const useGlobalStyles = createUseStyles(globalStyles);
 
@@ -30,7 +29,6 @@ const Test = props => {
         of Letraset sheets containing Lorem Ipsum passages, and more recently
         with desktop publishing software like Aldus PageMaker including versions
         of Lorem Ipsum.
-        <Button>Kadek</Button>
       </AppDrawer>
     </div>
   );
