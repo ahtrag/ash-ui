@@ -52,6 +52,9 @@ const useStyles = createUseStyles({
   },
   fullWidth: {
     width: "100%"
+  },
+  noMargin: {
+    margin: 0
   }
 });
 
@@ -67,7 +70,8 @@ const TextInputDefault = props => {
     className,
     style,
     onChange,
-    fullWidth
+    fullWidth,
+    noMargin
   } = props;
   const [focus, setFocus] = useState(extra && extra.start ? true : false);
   const classes = useStyles();
@@ -79,7 +83,7 @@ const TextInputDefault = props => {
     <div
       className={`${classes.inputWrapper}${
         fullWidth ? ` ${classes.fullWidth}` : ""
-      }`}
+      }${noMargin ? ` ${classes.noMargin}` : ""}`}
     >
       {extra && extra.start && (
         <div className={classes.extraStart}>{extra.start}</div>
@@ -125,7 +129,8 @@ TextInputDefault.propTypes = {
   className: PropTypes.string,
   style: PropTypes.object,
   onChange: PropTypes.func,
-  fullWidth: PropTypes.bool
+  fullWidth: PropTypes.bool,
+  noMargin: PropTypes.bool
 };
 
 export default TextInputDefault;

@@ -18,6 +18,7 @@ const SelectView = props => {
 
 SelectView.defaultProps = {
   fullWidth: false,
+  noMargin: false,
   variant: "default"
 };
 
@@ -80,7 +81,13 @@ SelectView.propTypes = {
   extra: PropTypes.shape({
     start: PropTypes.element,
     end: PropTypes.element
-  })
+  }),
+
+  /**
+   * Show TextInput without margin-top and margin-bottom
+   * @defaultValue false
+   */
+  noMargin: PropTypes.bool
 };
 
 export default SelectView;

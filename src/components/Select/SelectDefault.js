@@ -52,6 +52,9 @@ const useStyles = createUseStyles({
   },
   fullWidth: {
     width: "100%"
+  },
+  noMargin: {
+    margin: 0
   }
 });
 
@@ -66,7 +69,8 @@ const SelectDefault = props => {
     name,
     onChange,
     className,
-    style
+    style,
+    noMargin
   } = props;
   const classes = useStyles();
   const defaultStyles = [classes.select, classes.fullWidth, className]
@@ -78,7 +82,7 @@ const SelectDefault = props => {
     <div
       className={`${classes.inputWrapper}${
         fullWidth ? ` ${classes.fullWidth}` : ""
-      }`}
+      }${noMargin ? ` ${classes.noMargin}` : ""}`}
     >
       {extra && extra.start && (
         <div className={classes.extraStart}>{extra.start}</div>
@@ -123,7 +127,8 @@ SelectDefault.propTypes = {
   name: PropTypes.string,
   onChange: PropTypes.func,
   className: PropTypes.string,
-  style: PropTypes.object
+  style: PropTypes.object,
+  noMargin: PropTypes.bool
 };
 
 export default SelectDefault;

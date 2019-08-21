@@ -70,6 +70,9 @@ const useStyles = createUseStyles({
   },
   fullWidth: {
     width: "100%"
+  },
+  noMargin: {
+    margin: 0
   }
 });
 
@@ -84,7 +87,8 @@ const SelectOutlined = props => {
     className,
     style,
     onChange,
-    fullWidth
+    fullWidth,
+    noMargin
   } = props;
   const [focus, setFocus] = useState(false);
   const [labelWidth, setLabelWidth] = useState(0);
@@ -108,7 +112,7 @@ const SelectOutlined = props => {
     <div
       className={`${classes.inputWrapper}${
         fullWidth ? ` ${classes.fullWidth}` : ""
-      }`}
+      }${noMargin ? ` ${classes.noMargin}` : ""}`}
     >
       <fieldset className={classes.inputField}>
         <legend
@@ -162,7 +166,8 @@ SelectOutlined.propTypes = {
   name: PropTypes.string,
   onChange: PropTypes.func,
   className: PropTypes.string,
-  style: PropTypes.object
+  style: PropTypes.object,
+  noMargin: PropTypes.bool
 };
 
 export default SelectOutlined;

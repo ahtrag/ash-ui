@@ -19,6 +19,7 @@ const TextInputView = props => {
 TextInputView.defaultProps = {
   variant: "default",
   fullWidth: false,
+  noMargin: false,
   type: "text"
 };
 
@@ -89,7 +90,13 @@ TextInputView.propTypes = {
   /**
    * fullWidth enabled, default : false
    */
-  fullWidth: PropTypes.bool
+  fullWidth: PropTypes.bool,
+
+  /**
+   * Show TextInput without margin-top and margin-bottom
+   * @defaultValue false
+   */
+  noMargin: PropTypes.bool
 };
 
 export default TextInputView;
