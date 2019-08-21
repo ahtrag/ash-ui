@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
 import IconButton from "../IconButton/IconButtonView";
-import MenuIcon from "mdi-react/MenuIcon";
 import Drawer from "../Drawer/DrawerView";
 
 const drawerWidth = 240;
@@ -99,7 +98,7 @@ const AppDrawerView = props => {
                 className={classes.button}
                 onClick={() => setState({ ...state, isOpen: !state.isOpen })}
               >
-                <MenuIcon />
+                Menu
               </IconButton>
             ) : null}
             <h2>{title}</h2>
@@ -121,7 +120,7 @@ AppDrawerView.defaultProps = {
 
 AppDrawerView.propTypes = {
   /**
-   * AppBar title
+   * AppBar title isRequired
    */
   title: PropTypes.string.isRequired,
 
@@ -150,13 +149,16 @@ AppDrawerView.propTypes = {
   ]),
 
   /**
-   * MenuList for navigation require array of object :
+   * MenuList for navigation require array of object and className of string :
    * 1. icon    : element of icon
    * 2. label   : string of navigation label
    * 3. to      : string of route
    * 4. divider : boolean of divider
    */
-  menuList: PropTypes.arrayOf(PropTypes.object)
+  menuList: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.object),
+    className: PropTypes.string
+  })
 };
 
 export default AppDrawerView;

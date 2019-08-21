@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
-import ChevronLeftIcon from "mdi-react/ChevronLeftIcon";
 import { createRipple } from "../../utils/constants";
 import { Link } from "react-router-dom";
 
@@ -80,16 +79,16 @@ const DrawerView = props => {
               Boolean(onClose) && onClose(e);
             }}
           >
-            <ChevronLeftIcon />
+            chevron-left
           </IconButton>
         </div>
       </div>
       <div className={styles.menuList}>
         {menuList
-          ? menuList.map(menu => (
-              <div>
-                <Link to={menu.to} key={menu.label}>
-                  <div className={styles.menu}>
+          ? menuList.data.map(menu => (
+              <div key={menu.label}>
+                <Link to={menu.to}>
+                  <div className={`${styles.menu} ${menuList.className}`}>
                     {menu.icon} &nbsp; &nbsp;
                     {menu.label}
                   </div>
@@ -120,13 +119,16 @@ DrawerView.propTypes = {
   onClose: PropTypes.func,
 
   /**
-   * MenuList for navigation require array of object :
+   * MenuList for navigation require array of object and className of string :
    * 1. icon    : element of icon
    * 2. label   : string of navigation label
    * 3. to      : string of route
    * 4. divider : boolean of divider
    */
-  menuList: PropTypes.arrayOf(PropTypes.object)
+  menuList: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.object),
+    className: PropTypes.string
+  })
 };
 
 export default DrawerView;
