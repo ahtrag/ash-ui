@@ -8,7 +8,7 @@ const useStyles = createUseStyles({
     marginBottom: 4,
     display: "inline-flex",
     position: "relative",
-    borderBottom: "1px solid #ddd"
+    borderBottom: "1px solid #8D8A8A"
   },
   inputLabel: {
     position: "absolute",
