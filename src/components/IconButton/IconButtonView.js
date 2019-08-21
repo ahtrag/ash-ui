@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Icon from "../Icon";
 import { createUseStyles } from "react-jss";
 import { createRipple } from "../../utils/constants";
 
@@ -36,7 +35,7 @@ const useStyles = createUseStyles({
 });
 
 const IconButtonView = props => {
-  const { children, icon, className, style, onClick } = props;
+  const { children, className, style, onClick } = props;
   const classes = useStyles();
   const defaultStyles = [classes.iconButton, className]
     .filter(value => Boolean(value))
@@ -52,26 +51,17 @@ const IconButtonView = props => {
       }}
     >
       <span className={classes.rippleRoot} />
-      <Icon {...icon}>{children}</Icon>
+      {children}
     </button>
   );
 };
 
 IconButtonView.propTypes = {
   /**
-   * Name of the icon
+   * Icon component
+   * See https://github.com/levrik/mdi-react
    */
-  children: PropTypes.string.isRequired,
-
-  /**
-   * Styles of the icon
-   */
-  icon: PropTypes.shape({
-    size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    color: PropTypes.string,
-    className: PropTypes.string,
-    style: PropTypes.object
-  }),
+  children: PropTypes.element.isRequired,
 
   /**
    * Override default styles with className
