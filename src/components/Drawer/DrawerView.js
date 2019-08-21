@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
 import { createRipple } from "../../utils/constants";
 import { Link } from "react-router-dom";
+import ChevronLeftIcon from "mdi-react/ChevronLeftIcon";
 
 //component
 import IconButton from "../IconButton";
@@ -79,7 +80,7 @@ const DrawerView = props => {
               Boolean(onClose) && onClose(e);
             }}
           >
-            chevron-left
+            <ChevronLeftIcon />
           </IconButton>
         </div>
       </div>

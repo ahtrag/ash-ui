@@ -43,7 +43,7 @@ const TooltipView = props => {
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.tooltip}>
+      <div className={classes.tooltip} position={position}>
         <p>{label}</p>
       </div>
       {children}

@@ -49,6 +49,9 @@ PaperView.defaultProps = {
 };
 
 PaperView.propTypes = {
+  /**
+   * Children of Paper
+   */
   children: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.element),

@@ -82,7 +82,7 @@ GridView.propTypes = {
   type: PropTypes.oneOf(["container", "item"]),
 
   /**
-   * Type of Justify-Content:
+   * Type of Justify-Content in container:
    * 1. normal => normal
    * 2. start => flex-start
    * 3. center => center
@@ -102,7 +102,7 @@ GridView.propTypes = {
   ]),
 
   /**
-   * Type of Align-Items:
+   * Type of Align-Items in container:
    * 1. normal => normal
    * 2. start => flex-start
    * 3. center => center
