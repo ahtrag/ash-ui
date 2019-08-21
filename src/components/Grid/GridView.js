@@ -43,6 +43,7 @@ const GridView = props => {
 
   const defaultStyles = [
     styles.smPadAll,
+    styles.disInlineFlex,
     xs > 0 && xs < 13 ? styles[`xs${xs}`] : "",
     sm > 0 && sm < 13 ? styles[`sm${sm}`] : "",
     md > 0 && md < 13 ? styles[`md${md}`] : "",

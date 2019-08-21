@@ -53,8 +53,6 @@ const TooltipView = props => {
   const tooltipRef = useRef(null);
 
   const handleMouseEnter = () => {
-    console.log(tooltip);
-    console.log(window.innerWidth);
     setTooltip({
       show: true,
       wrapper: {
@@ -110,8 +108,19 @@ TooltipView.defaultProps = {
 };
 
 TooltipView.propTypes = {
+  /**
+   * Label of Tooltip
+   */
   label: PropTypes.string.isRequired,
+
+  /**
+   * Children of Tooltip
+   */
   children: PropTypes.element.isRequired,
+
+  /**
+   * Maxwidth of Tooltip
+   */
   maxWidth: PropTypes.number
 };
 
