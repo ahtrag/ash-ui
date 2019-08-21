@@ -126,6 +126,11 @@ ModalView.propTypes = {
   ]),
 
   /**
+   * Function onClick open modal
+   */
+  show: PropTypes.bool,
+
+  /**
    * Function close modal onClick overlay
    */
   close: PropTypes.func,

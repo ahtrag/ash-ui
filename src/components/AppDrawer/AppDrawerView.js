@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
 import IconButton from "../IconButton/IconButtonView";
 import Drawer from "../Drawer/DrawerView";
+import MenuIcon from "mdi-react/MenuIcon";
 
 const drawerWidth = 240;
 
@@ -98,7 +99,7 @@ const AppDrawerView = props => {
                 className={classes.button}
                 onClick={() => setState({ ...state, isOpen: !state.isOpen })}
               >
-                Menu
+                <MenuIcon />
               </IconButton>
             ) : null}
             <h2>{title}</h2>

@@ -22,16 +22,61 @@ SelectView.defaultProps = {
 };
 
 SelectView.propTypes = {
-  children: PropTypes.any,
+  /**
+   * Chidren of Select, option element. isRequired
+   */
+  children: PropTypes.any.isRequired,
+
+  /**
+   * Variant of Select :
+   * 1. outlined
+   * 2. default
+   */
   variant: PropTypes.oneOf(["outlined", "default"]),
+
+  /**
+   * Value of option selected
+   */
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+  /**
+   * event target option selected
+   */
   onChange: PropTypes.func,
+
+  /**
+   * fullWidth enabled, default : false
+   */
   fullWidth: PropTypes.bool,
+
+  /**
+   * Label of Select
+   */
   label: PropTypes.string,
+
+  /**
+   * Equal to label for enabling clickable
+   */
   id: PropTypes.string,
+
+  /**
+   * Name of Select component as identifier
+   */
   name: PropTypes.string,
+
+  /**
+   * Override default styles with className
+   */
   className: PropTypes.string,
+
+  /**
+   * Override default styles with style
+   */
   style: PropTypes.object,
+
+  /**
+   * Add object of element in the start and end of Select
+   */
   extra: PropTypes.shape({
     start: PropTypes.element,
     end: PropTypes.element
