@@ -66,15 +66,17 @@ const Test = props => {
         ) : null}
         <Grid type="container" style={{ flexDirection: "column" }}>
           <Grid type="item">
-            <Avatar
-              src="https://cdn.shopify.com/s/files/1/0051/4802/products/stickers_octocat_600x600.png?v=1520903827"
-              alt="Octocato"
-              size={50}
-              className={classes.classNameTest}
-              style={{ background: "white" }}
-            >
-              <AccountIcon />
-            </Avatar>
+            <Tooltip label="Telolet">
+              <Avatar
+                src="https://cdn.shopify.com/s/files/1/0051/4802/products/stickers_octocat_600x600.png?v=1520903827"
+                alt="Octocato"
+                size={50}
+                className={classes.classNameTest}
+                style={{ background: "white" }}
+              >
+                <AccountIcon />
+              </Avatar>
+            </Tooltip>
           </Grid>
 
           <Grid type="item">
@@ -89,24 +91,33 @@ const Test = props => {
           </Grid>
 
           <Grid type="item">
-            <Button
-              variant="contained"
-              onClick={() => setState({ ...state, show: !state.show })}
-              className={classes.classNameTest}
-              style={{ background: "white", color: "black" }}
-            >
-              Modal
-            </Button>
+            <Tooltip label="All will be fine 0x0x0">
+              <Button
+                variant="contained"
+                onClick={() => setState({ ...state, show: !state.show })}
+                className={classes.classNameTest}
+                style={{ background: "white", color: "black" }}
+              >
+                Modal
+              </Button>
+            </Tooltip>
+
             {state.show ? (
               <Modal
                 show={state.show}
-                header={<AccountIcon />}
+                header={
+                  <Tooltip label="Maybe this work out for the better">
+                    <AccountIcon />
+                  </Tooltip>
+                }
                 footer={
-                  <Button
-                    onClick={() => setState({ ...state, show: !state.show })}
-                  >
-                    Close
-                  </Button>
+                  <Tooltip label="sakepo dake">
+                    <Button
+                      onClick={() => setState({ ...state, show: !state.show })}
+                    >
+                      Close
+                    </Button>
+                  </Tooltip>
                 }
                 close={() => setState({ ...state, show: !state.show })}
               >
@@ -116,7 +127,7 @@ const Test = props => {
           </Grid>
 
           <Grid type="item">
-            <Tooltip position="top" label="icon button">
+            <Tooltip label="icon button">
               <IconButton>
                 <AccountIcon />
               </IconButton>
@@ -124,54 +135,64 @@ const Test = props => {
           </Grid>
 
           <Grid type="item">
-            <Switch
-              switchValues={["Val1", "Val2"]}
-              active={state.active}
-              onSwitch={value => setState({ ...state, active: value })}
-              className={classes.classNameTest}
-              style={{ background: "white" }}
-            />
+            <Tooltip label="There is a time when i feel really desperate">
+              <Switch
+                switchValues={["Val1", "Val2"]}
+                active={state.active}
+                onSwitch={value => setState({ ...state, active: value })}
+                className={classes.classNameTest}
+                style={{ background: "white" }}
+              />
+            </Tooltip>
           </Grid>
 
-          <div style={{ direction: "row" }}>
-            <Divider variant="middle" />
+          <div>
+            <Tooltip label="My spirit as this as this divider">
+              <Divider variant="middle" />
+            </Tooltip>
           </div>
 
           <Grid type="item">
-            <Select
-              variant="default"
-              value={state.optionValue}
-              onChange={e =>
-                setState({ ...state, optionValue: e.target.value })
-              }
-              label="Select"
-              id="Select"
-              extra={{
-                start: <AccountIcon color="black" />,
-                end: <AccountIcon />
-              }}
-              className={classes.classNameTest}
-              style={{ background: "white", color: "black" }}
-            >
-              <option value={0} />
-              <option value={1}>Option 1</option>
-              <option value={2}>Option 2</option>
-              <option value={3}>Option 3</option>
-            </Select>
+            <Tooltip label="Your smile give me strength to advance even more">
+              <Select
+                variant="default"
+                value={state.optionValue}
+                onChange={e =>
+                  setState({ ...state, optionValue: e.target.value })
+                }
+                label="Select"
+                id="Select"
+                extra={{
+                  start: <AccountIcon color="black" />,
+                  end: <AccountIcon />
+                }}
+                className={classes.classNameTest}
+                style={{ background: "white", color: "black" }}
+              >
+                <option value={0} />
+                <option value={1}>Option 1</option>
+                <option value={2}>Option 2</option>
+                <option value={3}>Option 3</option>
+              </Select>
+            </Tooltip>
           </Grid>
 
           <Grid type="item">
-            <TextInput
-              label="Label"
-              value={state.inputValue}
-              id="Input"
-              name="Input"
-              placeholder="Input"
-              variant="outlined"
-              type="text"
-              extra={{ start: <AccountIcon /> }}
-              onChange={e => setState({ ...state, inputValue: e.target.value })}
-            />
+            <Tooltip label="Taste your smell like cherry">
+              <TextInput
+                label="Label"
+                value={state.inputValue}
+                id="Input"
+                name="Input"
+                placeholder="Input"
+                variant="outlined"
+                type="text"
+                extra={{ start: <AccountIcon /> }}
+                onChange={e =>
+                  setState({ ...state, inputValue: e.target.value })
+                }
+              />
+            </Tooltip>
           </Grid>
         </Grid>
       </AppDrawer>
