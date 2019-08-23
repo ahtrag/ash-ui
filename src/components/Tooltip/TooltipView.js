@@ -9,7 +9,7 @@ const useStyles = createUseStyles({
     height: "auto",
     top: 0,
     left: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.65)",
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
     zIndex: 100,
     padding: 8,
     color: "white",
@@ -23,7 +23,7 @@ const useStyles = createUseStyles({
       left: "calc(50% - 5px)",
       borderWidth: 5,
       borderStyle: "solid",
-      borderColor: "transparent transparent rgba(0, 0, 0, 0.65) transparent"
+      borderColor: "transparent transparent rgba(0, 0, 0, 0.75) transparent"
     }
   },
   showTooltip: {
@@ -32,7 +32,8 @@ const useStyles = createUseStyles({
   tooltipText: {
     fontSize: 12,
     textAlign: "center",
-    wordBreak: "break-word"
+    wordBreak: "break-word",
+    lineHeight: "20px"
   }
 });
 
@@ -56,7 +57,12 @@ const TooltipView = props => {
     setTooltip({
       show: true,
       wrapper: {
-        top: tooltipWrapperRef.current.offsetTop,
+        top:
+          tooltipWrapperRef.current.offsetParent.tagName === "TD"
+            ? tooltipWrapperRef.current.offsetTop +
+              tooltipWrapperRef.current.offsetParent.offsetTop +
+              tooltipWrapperRef.current.offsetParent.offsetParent.offsetTop
+            : tooltipWrapperRef.current.offsetTop,
         left: tooltipWrapperRef.current.offsetLeft,
         height: tooltipWrapperRef.current.offsetHeight,
         width: tooltipWrapperRef.current.offsetWidth
@@ -71,6 +77,7 @@ const TooltipView = props => {
       onMouseLeave={() => setTooltip({ ...tooltip, show: false })}
       ref={tooltipWrapperRef}
     >
+      {children}
       <div
         ref={tooltipRef}
         className={`${classes.tooltip}${
@@ -92,12 +99,13 @@ const TooltipView = props => {
           width:
             tooltip.wrapper.left - tooltip.wrapper.width / 2 < 0
               ? tooltip.wrapper.width - 16
+              : tooltip.wrapper.left + tooltip.width > window.innerWidth
+              ? window.innerWidth - tooltip.wrapper.left
               : "auto"
         }}
       >
         <p className={classes.tooltipText}>{label}</p>
       </div>
-      {children}
     </div>
   );
 };
