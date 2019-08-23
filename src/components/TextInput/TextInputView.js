@@ -62,7 +62,7 @@ TextInputView.propTypes = {
    * 2. email
    * 3. password
    */
-  type: PropTypes.oneOf(["text", "email", "password"]),
+  type: PropTypes.oneOf(["text", "email", "password", "number", "tel"]),
 
   /**
    * Add object of element in the start and end of TextInput

@@ -121,7 +121,7 @@ TextInputDefault.propTypes = {
   id: PropTypes.string,
   name: PropTypes.string,
   placeholder: PropTypes.string,
-  type: PropTypes.oneOf(["text", "email", "password"]),
+  type: PropTypes.oneOf(["text", "email", "password", "number", "tel"]),
   extra: PropTypes.shape({
     start: PropTypes.element,
     end: PropTypes.element
