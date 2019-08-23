@@ -9,8 +9,10 @@ const useStyles = createUseStyles({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    height: 50,
-    width: 50,
+    height: 24,
+    width: 24,
+    padding: 12,
+    boxSizing: "content-box",
     borderRadius: "50%",
     cursor: "pointer",
     overflow: "hidden",
@@ -31,13 +33,21 @@ const useStyles = createUseStyles({
     left: 0,
     height: "100%",
     width: "100%"
+  },
+  disabled: {
+    color: "rgba(0, 0, 0, 0.3) !important",
+    cursor: "default !important"
   }
 });
 
 const IconButtonView = props => {
-  const { children, className, style, onClick } = props;
+  const { children, className, style, onClick, disable, disableRipple } = props;
   const classes = useStyles();
-  const defaultStyles = [classes.iconButton, className]
+  const defaultStyles = [
+    classes.iconButton,
+    className,
+    disable ? classes.disabled : null
+  ]
     .filter(value => Boolean(value))
     .join(" ");
 
@@ -45,15 +55,26 @@ const IconButtonView = props => {
     <button
       className={defaultStyles}
       style={style}
-      onClick={e => {
-        createRipple(e);
-        Boolean(onClick) && onClick(e);
-      }}
+      onClick={
+        !disable
+          ? e => {
+              !disableRipple && createRipple(e);
+              Boolean(onClick) && onClick(e);
+            }
+          : null
+      }
     >
-      <span className={classes.rippleRoot} />
+      {disable || disableRipple ? null : (
+        <span className={classes.rippleRoot} />
+      )}
       {children}
     </button>
   );
+};
+
+IconButtonView.defaultProps = {
+  disable: false,
+  disableRipple: false
 };
 
 IconButtonView.propTypes = {
@@ -76,7 +97,9 @@ IconButtonView.propTypes = {
   /**
    * Function that will triggered when Button is clicked
    */
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  disable: PropTypes.bool,
+  disableRipple: PropTypes.bool
 };
 
 export default IconButtonView;
