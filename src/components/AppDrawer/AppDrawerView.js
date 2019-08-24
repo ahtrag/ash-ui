@@ -104,9 +104,7 @@ const AppDrawerView = props => {
             ) : null}
             <h2>{title}</h2>
           </div>
-          <div>
-            <p>Hi, {profile}</p>
-          </div>
+          <div>{profile}</div>
         </div>
         <div className={classes.content}>{children}</div>
       </div>
@@ -128,7 +126,7 @@ AppDrawerView.propTypes = {
   /**
    * AppBar profile
    */
-  profile: PropTypes.string.isRequired,
+  profile: PropTypes.any,
 
   /**
    * Override default styles with className
