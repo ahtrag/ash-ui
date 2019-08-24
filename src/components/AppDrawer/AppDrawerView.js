@@ -121,12 +121,12 @@ AppDrawerView.propTypes = {
   /**
    * AppBar title isRequired
    */
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
 
   /**
    * AppBar profile
    */
-  profile: PropTypes.any,
+  profile: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 
   /**
    * Override default styles with className
