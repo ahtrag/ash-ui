@@ -15,7 +15,7 @@ import PlusCircleIcon from "mdi-react/PlusCircleIcon";
 import TextInput from "../TextInput";
 import Select from "../Select";
 import IconButton from "../IconButton";
-import Tooltip from "../Tooltip";
+// import Tooltip from "../Tooltip";
 import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
@@ -124,58 +124,79 @@ const TableView = props => {
     data,
     columns,
     title,
-    disabledEmptyRows,
-    onAdd,
-    onUpdate,
-    onDelete
+    className,
+    style,
+    disableEmptyRows,
+    disableSearch,
+    disableSort,
+    disablePagination,
+    defaultSort,
+    editable
   } = props;
-  const dataWithId = data.slice();
   const classes = useStyles();
   const [tableData, setTableData] = useState([]);
+  const [dataWithId, setDataWithId] = useState([]);
   const [visibleData, setVisibleData] = useState(10);
-  const [sortType, setSortType] = useState("");
-  const [sortColumn, setSortColumn] = useState(null);
   const [searchValue, setSearchValue] = useState("");
   const [page, setPage] = useState(0);
   const [activeColumn, setActiveColumn] = useState(null);
   const [actionType, setActionType] = useState(null);
   const [inputValue, setInputValue] = useState({});
   const [showAdd, setShowAdd] = useState(false);
+  const [sortType, setSortType] = useState("");
+  const [sortColumn, setSortColumn] = useState(null);
 
   useEffect(() => {
-    data.map((item, index) => {
-      item.tableData = `table-data-${index}`;
-      return dataWithId.push(item);
-    });
-  }, []);
+    const tempData = data.slice();
+    tempData.map((item, index) => (item.tableData = `table-data-${index}`));
+    setDataWithId(tempData.slice());
+    setTableData(tempData.slice());
+    if (
+      defaultSort &&
+      (defaultSort.type === "ascending" || defaultSort.type === "descending") &&
+      tempData[0][defaultSort.column]
+    ) {
+      setSortType(defaultSort.type);
+      setSortColumn(defaultSort.column);
+    }
+  }, [data]);
 
   useEffect(() => {
-    setTableData(
-      dataWithId.slice(0 + visibleData * page, visibleData * (page + 1))
-    );
-  }, [visibleData, page]);
+    if (dataWithId.length > 0) {
+      const regexp = new RegExp(
+        searchValue.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "mi"
+      );
+      const filteredItems = dataWithId.filter(item => {
+        let tempItem = { ...item };
+        delete tempItem.tableData;
+        return regexp.test(Object.values(tempItem).join(""));
+      });
+      setTableData(filteredItems.slice());
+    }
+  }, [searchValue]);
 
-  const handleSort = (type, column) => {
-    if (tableData.length > 0) {
-      if (typeof tableData[0][column] === "number") {
-        if (type === "descending") {
+  useEffect(() => {
+    if (tableData.length > 0 && sortType && sortColumn) {
+      if (typeof tableData[0][sortColumn] === "number") {
+        if (sortType === "descending") {
           setTableData(prevTableData =>
-            prevTableData.slice().sort((a, b) => b[column] - a[column])
+            prevTableData.slice().sort((a, b) => b[sortColumn] - a[sortColumn])
           );
         } else {
           setTableData(prevTableData =>
-            prevTableData.slice().sort((a, b) => a[column] - b[column])
+            prevTableData.slice().sort((a, b) => a[sortColumn] - b[sortColumn])
           );
         }
       } else {
-        if (type === "descending") {
+        if (sortType === "descending") {
           setTableData(prevTableData =>
             prevTableData
               .slice()
               .sort((a, b) =>
-                a[column].toUpperCase() < b[column].toUpperCase()
+                a[sortColumn].toUpperCase() < b[sortColumn].toUpperCase()
                   ? -1
-                  : a[column].toUpperCase() > b[column].toUpperCase()
+                  : a[sortColumn].toUpperCase() > b[sortColumn].toUpperCase()
                   ? 1
                   : 0
               )
@@ -186,9 +207,9 @@ const TableView = props => {
             prevTableData
               .slice()
               .sort((a, b) =>
-                a[column].toUpperCase() < b[column].toUpperCase()
+                a[sortColumn].toUpperCase() < b[sortColumn].toUpperCase()
                   ? -1
-                  : a[column].toUpperCase() > b[column].toUpperCase()
+                  : a[sortColumn].toUpperCase() > b[sortColumn].toUpperCase()
                   ? 1
                   : 0
               )
@@ -196,25 +217,16 @@ const TableView = props => {
         }
       }
     }
+  }, [sortType, sortColumn]);
 
+  const handleSort = (type, column) => {
     setSortType(type);
     setSortColumn(column);
   };
 
-  const handleSearch = e => {
+  const handleChangeSearchValue = e => {
     const value = e.target.value;
-    const regexp = new RegExp(
-      value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
-      "mi"
-    );
-    const filteredItems = dataWithId.filter(item => {
-      let tempItem = { ...item };
-      delete tempItem.tableData;
-      return regexp.test(Object.values(tempItem).join(""));
-    });
-    setTableData(
-      filteredItems.slice(0 + visibleData * page, visibleData * (page + 1))
-    );
+    setPage(0);
     setSearchValue(value);
   };
 
@@ -230,10 +242,10 @@ const TableView = props => {
 
       switch (actionType) {
         case "edit":
-          onUpdate(oldData, { ...oldData, ...inputValue });
+          editable.onUpdate(oldData, { ...oldData, ...inputValue });
           break;
         case "delete":
-          onDelete(oldData);
+          editable.onDelete(oldData);
           break;
         default:
           break;
@@ -242,7 +254,7 @@ const TableView = props => {
       return handleCancelAction();
     }
 
-    onAdd(inputValue);
+    editable.onAdd(inputValue);
     return handleCancelAction();
   };
 
@@ -260,32 +272,50 @@ const TableView = props => {
     });
   };
 
+  const handleChangeVisibleData = e => {
+    setPage(0);
+    setVisibleData(parseInt(e.target.value));
+  };
+
   return (
     <div className={classes.root}>
       <div className={classes.header}>
         <h3 className={classes.headerTitle}>{title}</h3>
-        <TextInput
-          placeholder="Search"
-          extra={{ start: <SearchIcon /> }}
-          value={searchValue}
-          onChange={handleSearch}
-          noMargin
-        />
-        <Tooltip label="Add">
-          <IconButton onClick={() => setShowAdd(prevShow => !prevShow)}>
+        {!disableSearch ? (
+          <TextInput
+            placeholder="Search"
+            extra={{ start: <SearchIcon /> }}
+            value={searchValue}
+            onChange={handleChangeSearchValue}
+            noMargin
+          />
+        ) : null}
+        {editable ? (
+          // <Tooltip label="Add">
+          <IconButton
+            onClick={() => setShowAdd(prevShow => !prevShow)}
+            className={classes.actionButton}
+          >
             <PlusCircleIcon />
           </IconButton>
-        </Tooltip>
+        ) : // </Tooltip>
+        null}
       </div>
       <div className={classes.body}>
-        <table className={classes.table}>
+        <table
+          className={`${classes.table}${className ? ` ${className}` : ""}`}
+        >
           <thead>
             <tr>
-              <th className={`${classes.tableCell} ${classes.tableActionCell}`}>
-                <div className={classes.tableHeadColumn}>
-                  <h4 className={classes.tableHeadColumnLabel}>Actions</h4>
-                </div>
-              </th>
+              {editable ? (
+                <th
+                  className={`${classes.tableCell} ${classes.tableActionCell}`}
+                >
+                  <div className={classes.tableHeadColumn}>
+                    <h4 className={classes.tableHeadColumnLabel}>Actions</h4>
+                  </div>
+                </th>
+              ) : null}
               {columns.map(column => (
                 <th
                   key={column.key}
@@ -302,7 +332,7 @@ const TableView = props => {
                       );
                     }}
                   >
-                    {column.type === "numeric" ? (
+                    {column.type === "numeric" && !disableSort ? (
                       <SortAscendingIcon
                         className={`${classes.tableHeadColumnIcon}${
                           column.key === sortColumn
@@ -328,7 +358,7 @@ const TableView = props => {
                     >
                       {column.label}
                     </h4>
-                    {column.type === "numeric" ? null : (
+                    {column.type === "numeric" || disableSort ? null : (
                       <SortAscendingIcon
                         className={`${classes.tableHeadColumnIcon}${
                           column.key === sortColumn
@@ -351,119 +381,130 @@ const TableView = props => {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row, index) => (
-              <tr key={row.tableData}>
-                <td
-                  className={`${classes.tableCell} ${classes.tableActionCell}`}
-                  style={{ width: 96 }}
-                >
-                  <div style={{ display: "flex" }}>
-                    <Tooltip
-                      label={row.tableData === activeColumn ? "Save" : "Edit"}
+            {tableData
+              .slice(0 + visibleData * page, visibleData * (page + 1))
+              .map((row, index) => (
+                <tr key={row.tableData}>
+                  {editable ? (
+                    <td
+                      className={`${classes.tableCell} ${
+                        classes.tableActionCell
+                      }`}
+                      style={{ width: 96 }}
                     >
-                      <IconButton
-                        onClick={() =>
-                          row.tableData === activeColumn
-                            ? handleSaveAction(row)
-                            : handleAction(row.tableData, "edit")
+                      <div style={{ display: "flex" }}>
+                        {/* <Tooltip
+                        label={row.tableData === activeColumn ? "Save" : "Edit"}
+                      > */}
+                        <IconButton
+                          onClick={() =>
+                            row.tableData === activeColumn
+                              ? handleSaveAction(row)
+                              : handleAction(row.tableData, "edit")
+                          }
+                          className={classes.actionButton}
+                          disable={
+                            (activeColumn !== null &&
+                              row.tableData !== activeColumn) ||
+                            showAdd
+                          }
+                        >
+                          {row.tableData === activeColumn ? (
+                            <CheckIcon />
+                          ) : (
+                            <EditIcon />
+                          )}
+                        </IconButton>
+                        {/* </Tooltip>
+                      <Tooltip
+                        label={
+                          row.tableData === activeColumn ? "Cancel" : "Delete"
                         }
-                        className={classes.actionButton}
-                        disable={
-                          (activeColumn !== null &&
-                            row.tableData !== activeColumn) ||
-                          showAdd
-                        }
+                      > */}
+                        <IconButton
+                          onClick={() =>
+                            row.tableData === activeColumn
+                              ? handleCancelAction()
+                              : handleAction(row.tableData, "delete")
+                          }
+                          className={classes.actionButton}
+                          disable={
+                            (activeColumn !== null &&
+                              row.tableData !== activeColumn) ||
+                            showAdd
+                          }
+                        >
+                          {row.tableData === activeColumn ? (
+                            <CloseIcon />
+                          ) : (
+                            <DeleteIcon />
+                          )}
+                        </IconButton>
+                        {/* </Tooltip> */}
+                      </div>
+                    </td>
+                  ) : null}
+                  {row.tableData === activeColumn ? (
+                    actionType === "edit" ? (
+                      columns.map(column => (
+                        <td
+                          key={`${row.tableData}${column.key}`}
+                          className={`${classes.tableCell}${
+                            column.type === "numeric"
+                              ? ` ${classes.numeric}`
+                              : ""
+                          }`}
+                        >
+                          <TextInput
+                            placeholder={column.label}
+                            type={column.type === "numeric" ? "number" : "text"}
+                            value={
+                              inputValue[column.key]
+                                ? inputValue[column.key].toString()
+                                : inputValue[column.key] === ""
+                                ? ""
+                                : row[column.key].toString()
+                            }
+                            onChange={e =>
+                              handleChangeText(
+                                column.key,
+                                column.type === "numeric"
+                                  ? parseInt(e.target.value)
+                                  : e.target.value
+                              )
+                            }
+                            noMargin
+                          />
+                        </td>
+                      ))
+                    ) : (
+                      <td
+                        className={classes.tableCell}
+                        colSpan={columns.length}
                       >
-                        {row.tableData === activeColumn ? (
-                          <CheckIcon />
-                        ) : (
-                          <EditIcon />
-                        )}
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip
-                      label={
-                        row.tableData === activeColumn ? "Cancel" : "Delete"
-                      }
-                    >
-                      <IconButton
-                        onClick={() =>
-                          row.tableData === activeColumn
-                            ? handleCancelAction()
-                            : handleAction(row.tableData, "delete")
-                        }
-                        className={classes.actionButton}
-                        disable={
-                          (activeColumn !== null &&
-                            row.tableData !== activeColumn) ||
-                          showAdd
-                        }
-                      >
-                        {row.tableData === activeColumn ? (
-                          <CloseIcon />
-                        ) : (
-                          <DeleteIcon />
-                        )}
-                      </IconButton>
-                    </Tooltip>
-                  </div>
-                </td>
-                {row.tableData === activeColumn ? (
-                  actionType === "edit" ? (
+                        Are you sure want to delete this data?
+                      </td>
+                    )
+                  ) : (
                     columns.map(column => (
                       <td
                         key={`${row.tableData}${column.key}`}
                         className={`${classes.tableCell}${
                           column.type === "numeric" ? ` ${classes.numeric}` : ""
+                        }${
+                          (activeColumn !== null &&
+                            row.tableData !== activeColumn) ||
+                          showAdd
+                            ? ` ${classes.inactiveColumn}`
+                            : ""
                         }`}
                       >
-                        <TextInput
-                          placeholder={column.label}
-                          type={column.type === "numeric" ? "number" : "text"}
-                          value={
-                            inputValue[column.key]
-                              ? inputValue[column.key].toString()
-                              : inputValue[column.key] === ""
-                              ? ""
-                              : row[column.key].toString()
-                          }
-                          onChange={e =>
-                            handleChangeText(
-                              column.key,
-                              column.type === "numeric"
-                                ? parseInt(e.target.value)
-                                : e.target.value
-                            )
-                          }
-                          noMargin
-                        />
+                        {row[column.key]}
                       </td>
                     ))
-                  ) : (
-                    <td className={classes.tableCell} colSpan={columns.length}>
-                      Are you sure want to delete this data?
-                    </td>
-                  )
-                ) : (
-                  columns.map(column => (
-                    <td
-                      key={`${row.tableData}${column.key}`}
-                      className={`${classes.tableCell}${
-                        column.type === "numeric" ? ` ${classes.numeric}` : ""
-                      }${
-                        (activeColumn !== null &&
-                          row.tableData !== activeColumn) ||
-                        showAdd
-                          ? ` ${classes.inactiveColumn}`
-                          : ""
-                      }`}
-                    >
-                      {row[column.key]}
-                    </td>
-                  ))
-                )}
-              </tr>
-            ))}
+                  )}
+                </tr>
+              ))}
             {showAdd ? (
               <tr>
                 <td
@@ -471,22 +512,22 @@ const TableView = props => {
                   style={{ width: 96 }}
                 >
                   <div style={{ display: "flex" }}>
-                    <Tooltip label="Save">
-                      <IconButton
-                        onClick={() => handleSaveAction()}
-                        className={classes.actionButton}
-                      >
-                        <CheckIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip label="Cancel">
-                      <IconButton
-                        onClick={() => handleCancelAction()}
-                        className={classes.actionButton}
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                    </Tooltip>
+                    {/* <Tooltip label="Save"> */}
+                    <IconButton
+                      onClick={() => handleSaveAction()}
+                      className={classes.actionButton}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                    {/* </Tooltip> */}
+                    {/* <Tooltip label="Cancel"> */}
+                    <IconButton
+                      onClick={() => handleCancelAction()}
+                      className={classes.actionButton}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                    {/* </Tooltip> */}
                   </div>
                 </td>
                 {columns.map(column => (
@@ -516,7 +557,7 @@ const TableView = props => {
                 <td
                   colSpan={columns.length + 1}
                   rowSpan={
-                    disabledEmptyRows ? tableData.length + 1 : visibleData + 1
+                    disableEmptyRows ? tableData.length + 1 : visibleData + 1
                   }
                   className={classes.noData}
                 >
@@ -524,77 +565,94 @@ const TableView = props => {
                 </td>
               </tr>
             ) : null}
-            {!disabledEmptyRows && tableData.length < visibleData
-              ? [...Array(visibleData - tableData.length)].map(
-                  (value, index) => (
-                    <tr
-                      key={`empty${index}`}
-                      style={{
-                        height: 56.8
-                      }}
-                    />
+            {!disableEmptyRows &&
+            tableData.slice(0 + visibleData * page, visibleData * (page + 1))
+              .length < visibleData
+              ? [
+                  ...Array(
+                    visibleData -
+                      tableData.slice(
+                        0 + visibleData * page,
+                        visibleData * (page + 1)
+                      ).length
                   )
-                )
+                ].map((value, index) => (
+                  <tr
+                    key={`empty${index}`}
+                    style={{
+                      height: 56.8
+                    }}
+                  />
+                ))
               : null}
           </tbody>
         </table>
       </div>
-      <div className={classes.footer}>
-        <h5 className={classes.footerRowsText}>Rows</h5>
-        <Select
-          value={visibleData}
-          onChange={e => setVisibleData(parseInt(e.target.value))}
-          className={classes.footerRowsSelect}
-          noMargin
-        >
-          <option value={10}>10</option>
-          <option value={25}>25</option>
-          <option value={50}>50</option>
-          <option value={100}>100</option>
-        </Select>
-        <Tooltip label="First Page">
+      {!disablePagination ? (
+        <div className={classes.footer}>
+          <h5 className={classes.footerRowsText}>Rows</h5>
+          <Select
+            value={visibleData}
+            onChange={handleChangeVisibleData}
+            className={classes.footerRowsSelect}
+            noMargin
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </Select>
+          {/* <Tooltip label="First Page"> */}
           <IconButton onClick={() => setPage(0)} disable={page === 0}>
             <PageFirstIcon />
           </IconButton>
-        </Tooltip>
-        <Tooltip label="Previous Page">
+          {/* </Tooltip>
+          <Tooltip label="Previous Page"> */}
           <IconButton
             onClick={() => setPage(prevPage => prevPage - 1)}
             disable={page === 0}
           >
             <ChevronLeftIcon />
           </IconButton>
-        </Tooltip>
-        <h5 className={classes.footerRowsText}>
-          {dataWithId.length > visibleData * (page + 1)
-            ? `${visibleData * page + 1}-${visibleData} of ${dataWithId.length}`
-            : `${visibleData * page + 1}-${dataWithId.length} of ${
-                dataWithId.length
-              }`}
-        </h5>
-        <Tooltip label="Next Page">
+          {/* </Tooltip> */}
+          <h5 className={classes.footerRowsText}>
+            {tableData.length > visibleData * (page + 1)
+              ? `${visibleData * page + 1}-${visibleData} of ${
+                  tableData.length
+                }`
+              : tableData.length === 0
+              ? "0-0 of 0"
+              : `${visibleData * page + 1}-${tableData.length} of ${
+                  tableData.length
+                }`}
+          </h5>
+          {/* <Tooltip label="Next Page"> */}
           <IconButton
             onClick={() => setPage(prevPage => prevPage + 1)}
-            disable={page === Math.floor(dataWithId.length / visibleData)}
+            disable={page === Math.floor(tableData.length / visibleData)}
           >
             <ChevronRightIcon />
           </IconButton>
-        </Tooltip>
-        <Tooltip label="Last Page">
+          {/* </Tooltip>
+          <Tooltip label="Last Page"> */}
           <IconButton
-            onClick={() => setPage(Math.floor(dataWithId.length / visibleData))}
-            disable={page === Math.floor(dataWithId.length / visibleData)}
+            onClick={() => setPage(Math.floor(tableData.length / visibleData))}
+            disable={page === Math.floor(tableData.length / visibleData)}
           >
             <PageLastIcon />
           </IconButton>
-        </Tooltip>
-      </div>
+          {/* </Tooltip> */}
+        </div>
+      ) : null}
     </div>
   );
 };
 
 TableView.defaultProps = {
-  disabledEmptyRows: false
+  disableEmptyRows: false,
+  disableSearch: false,
+  disableSort: false,
+  disablePagination: false
 };
 
 TableView.propTypes = {
@@ -606,11 +664,22 @@ TableView.propTypes = {
       type: PropTypes.oneOf(["numeric"])
     })
   ).isRequired,
-  disabledEmptyRows: PropTypes.bool,
-  title: PropTypes.string,
-  onAdd: PropTypes.func,
-  onUpdate: PropTypes.func,
-  onDelete: PropTypes.func
+  disableEmptyRows: PropTypes.bool,
+  disableSearch: PropTypes.bool,
+  disableSort: PropTypes.bool,
+  disablePagination: PropTypes.bool,
+  title: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
+  className: PropTypes.string,
+  style: PropTypes.object,
+  defaultSort: PropTypes.shape({
+    type: PropTypes.oneOf(["ascending", "descending"]).isRequired,
+    column: PropTypes.string.isRequired
+  }),
+  editable: PropTypes.shape({
+    onAdd: PropTypes.func.isRequired,
+    onUpdate: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired
+  })
 };
 
 export default TableView;
