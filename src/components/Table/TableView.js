@@ -148,7 +148,14 @@ const TableView = props => {
 
   useEffect(() => {
     const tempData = data.slice();
-    tempData.map((item, index) => (item.tableData = `table-data-${index}`));
+    tempData.map((item, index) => {
+      item.tableData = `table-data-${index}`;
+      return columns.map(column =>
+        column.type === "select"
+          ? (item[column.key] = column.option[item[column.key]])
+          : null
+      );
+    });
     setDataWithId(tempData.slice());
     setTableData(tempData.slice());
     if (
@@ -240,6 +247,19 @@ const TableView = props => {
       const oldData = { ...column };
       delete oldData.tableData;
 
+      columns.map(item =>
+        item.type === "select"
+          ? (oldData[item.key] = JSON.parse(
+              Object.keys(item.option).find(
+                key => item.option[key] === oldData[item.key]
+              )
+            ))
+          : null
+      );
+
+      console.log(oldData);
+      console.log(columns);
+
       switch (actionType) {
         case "edit":
           editable.onUpdate(oldData, { ...oldData, ...inputValue });
@@ -304,6 +324,7 @@ const TableView = props => {
       <div className={classes.body}>
         <table
           className={`${classes.table}${className ? ` ${className}` : ""}`}
+          style={style}
         >
           <thead>
             <tr>
@@ -325,12 +346,18 @@ const TableView = props => {
                 >
                   <div
                     className={classes.tableHeadColumn}
-                    onClick={() => {
-                      handleSort(
-                        sortType === "ascending" ? "descending" : "ascending",
-                        column.key
-                      );
-                    }}
+                    onClick={
+                      !disableSort
+                        ? () => {
+                            handleSort(
+                              sortType === "ascending"
+                                ? "descending"
+                                : "ascending",
+                              column.key
+                            );
+                          }
+                        : null
+                    }
                   >
                     {column.type === "numeric" && !disableSort ? (
                       <SortAscendingIcon
@@ -382,14 +409,15 @@ const TableView = props => {
           </thead>
           <tbody>
             {tableData
-              .slice(0 + visibleData * page, visibleData * (page + 1))
+              .slice(
+                !disablePagination ? 0 + visibleData * page : undefined,
+                !disablePagination ? visibleData * (page + 1) : undefined
+              )
               .map((row, index) => (
                 <tr key={row.tableData}>
                   {editable ? (
                     <td
-                      className={`${classes.tableCell} ${
-                        classes.tableActionCell
-                      }`}
+                      className={`${classes.tableCell} ${classes.tableActionCell}`}
                       style={{ width: 96 }}
                     >
                       <div style={{ display: "flex" }}>
@@ -455,26 +483,59 @@ const TableView = props => {
                               : ""
                           }`}
                         >
-                          <TextInput
-                            placeholder={column.label}
-                            type={column.type === "numeric" ? "number" : "text"}
-                            value={
-                              inputValue[column.key]
-                                ? inputValue[column.key].toString()
-                                : inputValue[column.key] === ""
-                                ? ""
-                                : row[column.key].toString()
-                            }
-                            onChange={e =>
-                              handleChangeText(
-                                column.key,
-                                column.type === "numeric"
-                                  ? parseInt(e.target.value)
-                                  : e.target.value
-                              )
-                            }
-                            noMargin
-                          />
+                          {column.type === "select" ? (
+                            <Select
+                              placeholder={column.label}
+                              value={
+                                JSON.stringify(inputValue[column.key])
+                                  ? JSON.stringify(inputValue[column.key])
+                                  : JSON.stringify(inputValue[column.key]) ===
+                                    ""
+                                  ? ""
+                                  : Object.keys(column.option).find(
+                                      option =>
+                                        column.option[option] ===
+                                        row[column.key]
+                                    )
+                              }
+                              onChange={e =>
+                                handleChangeText(
+                                  column.key,
+                                  JSON.parse(e.target.value)
+                                )
+                              }
+                              noMargin
+                            >
+                              {Object.entries(column.option).map(option => (
+                                <option key={option[0]} value={option[0]}>
+                                  {option[1]}
+                                </option>
+                              ))}
+                            </Select>
+                          ) : (
+                            <TextInput
+                              placeholder={column.label}
+                              type={
+                                column.type === "numeric" ? "number" : "text"
+                              }
+                              value={
+                                inputValue[column.key]
+                                  ? inputValue[column.key].toString()
+                                  : inputValue[column.key] === ""
+                                  ? ""
+                                  : row[column.key].toString()
+                              }
+                              onChange={e =>
+                                handleChangeText(
+                                  column.key,
+                                  column.type === "numeric"
+                                    ? parseInt(e.target.value)
+                                    : e.target.value
+                                )
+                              }
+                              noMargin
+                            />
+                          )}
                         </td>
                       ))
                     ) : (
@@ -537,17 +598,41 @@ const TableView = props => {
                       column.type === "numeric" ? ` ${classes.numeric}` : ""
                     }`}
                   >
-                    <TextInput
-                      placeholder={column.label}
-                      type={column.type === "numeric" ? "number" : "text"}
-                      value={
-                        inputValue[column.key] ? inputValue[column.key] : ""
-                      }
-                      onChange={e =>
-                        handleChangeText(column.key, e.target.value)
-                      }
-                      noMargin
-                    />
+                    {column.type === "select" ? (
+                      <Select
+                        placeholder={column.label}
+                        value={
+                          JSON.stringify(inputValue[column.key])
+                            ? JSON.stringify(inputValue[column.key])
+                            : ""
+                        }
+                        onChange={e =>
+                          handleChangeText(
+                            column.key,
+                            JSON.parse(e.target.value)
+                          )
+                        }
+                        noMargin
+                      >
+                        {Object.entries(column.option).map(option => (
+                          <option key={option[0]} value={option[0]}>
+                            {option[1]}
+                          </option>
+                        ))}
+                      </Select>
+                    ) : (
+                      <TextInput
+                        placeholder={column.label}
+                        type={column.type === "numeric" ? "number" : "text"}
+                        value={
+                          inputValue[column.key] ? inputValue[column.key] : ""
+                        }
+                        onChange={e =>
+                          handleChangeText(column.key, e.target.value)
+                        }
+                        noMargin
+                      />
+                    )}
                   </td>
                 ))}
               </tr>
@@ -661,7 +746,8 @@ TableView.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       key: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(["numeric"])
+      type: PropTypes.oneOf(["numeric", "select"]),
+      option: PropTypes.object
     })
   ).isRequired,
   disableEmptyRows: PropTypes.bool,
