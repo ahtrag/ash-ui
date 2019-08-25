@@ -98,7 +98,15 @@ IconButtonView.propTypes = {
    * Function that will triggered when Button is clicked
    */
   onClick: PropTypes.func,
+
+  /**
+   * Disable icon button
+   */
   disable: PropTypes.bool,
+
+  /**
+   * Disable ripple effect when clicked
+   */
   disableRipple: PropTypes.bool
 };
 

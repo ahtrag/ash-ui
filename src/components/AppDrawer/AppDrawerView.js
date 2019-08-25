@@ -82,11 +82,13 @@ const AppDrawerView = props => {
 
   return (
     <div className={classes.root}>
-      <Drawer
-        isOpen={state.isOpen}
-        onClose={() => setState({ ...state, isOpen: false })}
-        menuList={menuList}
-      />
+      {showMenu ? (
+        <Drawer
+          isOpen={state.isOpen}
+          onClose={() => setState({ ...state, isOpen: false })}
+          menuList={menuList}
+        />
+      ) : null}
       <div
         className={`${classes.appWraper} ${
           state.isOpen ? classes.drawerOpen : classes.drawerClose
@@ -127,6 +129,11 @@ AppDrawerView.propTypes = {
    * AppBar profile
    */
   profile: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+
+  /**
+   * Show menu drawer
+   */
+  showMenu: PropTypes.bool,
 
   /**
    * Override default styles with className
