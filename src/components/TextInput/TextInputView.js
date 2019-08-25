@@ -61,6 +61,8 @@ TextInputView.propTypes = {
    * 1. text
    * 2. email
    * 3. password
+   * 4. number,
+   * 5. tel
    */
   type: PropTypes.oneOf(["text", "email", "password", "number", "tel"]),
 
