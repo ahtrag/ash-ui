@@ -76,7 +76,8 @@ const useStyles = createUseStyles({
   },
   tableActionCell: {
     padding: 4,
-    textAlign: "center"
+    textAlign: "center",
+    width: 48
   },
   actionButton: {
     color: "rgba(0, 0, 0, 0.56)"
@@ -147,7 +148,8 @@ const TableView = props => {
   const [sortColumn, setSortColumn] = useState(null);
 
   useEffect(() => {
-    const tempData = data.slice();
+    const tempData = JSON.parse(JSON.stringify(data));
+
     tempData.map((item, index) => {
       item.tableData = `table-data-${index}`;
       return columns.map(column =>
@@ -156,8 +158,8 @@ const TableView = props => {
           : null
       );
     });
-    setDataWithId(tempData.slice());
-    setTableData(tempData.slice());
+    setDataWithId(JSON.parse(JSON.stringify(tempData)));
+    setTableData(JSON.parse(JSON.stringify(tempData)));
     if (
       defaultSort &&
       (defaultSort.type === "ascending" || defaultSort.type === "descending") &&
@@ -179,7 +181,7 @@ const TableView = props => {
         delete tempItem.tableData;
         return regexp.test(Object.values(tempItem).join(""));
       });
-      setTableData(filteredItems.slice());
+      setTableData(JSON.parse(JSON.stringify(filteredItems)));
     }
   }, [searchValue]);
 
@@ -188,18 +190,21 @@ const TableView = props => {
       if (typeof tableData[0][sortColumn] === "number") {
         if (sortType === "descending") {
           setTableData(prevTableData =>
-            prevTableData.slice().sort((a, b) => b[sortColumn] - a[sortColumn])
+            JSON.parse(JSON.stringify(prevTableData)).sort(
+              (a, b) => b[sortColumn] - a[sortColumn]
+            )
           );
         } else {
           setTableData(prevTableData =>
-            prevTableData.slice().sort((a, b) => a[sortColumn] - b[sortColumn])
+            JSON.parse(JSON.stringify(prevTableData)).sort(
+              (a, b) => a[sortColumn] - b[sortColumn]
+            )
           );
         }
       } else {
         if (sortType === "descending") {
           setTableData(prevTableData =>
-            prevTableData
-              .slice()
+            JSON.parse(JSON.stringify(prevTableData))
               .sort((a, b) =>
                 a[sortColumn].toUpperCase() < b[sortColumn].toUpperCase()
                   ? -1
@@ -211,15 +216,13 @@ const TableView = props => {
           );
         } else {
           setTableData(prevTableData =>
-            prevTableData
-              .slice()
-              .sort((a, b) =>
-                a[sortColumn].toUpperCase() < b[sortColumn].toUpperCase()
-                  ? -1
-                  : a[sortColumn].toUpperCase() > b[sortColumn].toUpperCase()
-                  ? 1
-                  : 0
-              )
+            JSON.parse(JSON.stringify(prevTableData)).sort((a, b) =>
+              a[sortColumn].toUpperCase() < b[sortColumn].toUpperCase()
+                ? -1
+                : a[sortColumn].toUpperCase() > b[sortColumn].toUpperCase()
+                ? 1
+                : 0
+            )
           );
         }
       }
@@ -256,9 +259,6 @@ const TableView = props => {
             ))
           : null
       );
-
-      console.log(oldData);
-      console.log(columns);
 
       switch (actionType) {
         case "edit":
@@ -310,10 +310,11 @@ const TableView = props => {
             noMargin
           />
         ) : null}
-        {editable ? (
+        {editable && editable.onAdd ? (
           // <Tooltip label="Add">
           <IconButton
             onClick={() => setShowAdd(prevShow => !prevShow)}
+            disable={Boolean(actionType) && Boolean(activeColumn)}
             className={classes.actionButton}
           >
             <PlusCircleIcon />
@@ -328,7 +329,7 @@ const TableView = props => {
         >
           <thead>
             <tr>
-              {editable ? (
+              {editable && (editable.onUpdate || editable.onDelete) ? (
                 <th
                   className={`${classes.tableCell} ${classes.tableActionCell}`}
                 >
@@ -418,56 +419,65 @@ const TableView = props => {
                   {editable ? (
                     <td
                       className={`${classes.tableCell} ${classes.tableActionCell}`}
-                      style={{ width: 96 }}
                     >
                       <div style={{ display: "flex" }}>
+                        {actionType && row.tableData === activeColumn ? (
+                          <IconButton
+                            onClick={() => handleSaveAction(row)}
+                            className={classes.actionButton}
+                            disable={showAdd}
+                          >
+                            <CheckIcon />
+                          </IconButton>
+                        ) : null}
+                        {actionType && row.tableData === activeColumn ? (
+                          <IconButton
+                            onClick={() => handleCancelAction()}
+                            className={classes.actionButton}
+                            disable={showAdd}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                        ) : null}
                         {/* <Tooltip
                         label={row.tableData === activeColumn ? "Save" : "Edit"}
                       > */}
-                        <IconButton
-                          onClick={() =>
-                            row.tableData === activeColumn
-                              ? handleSaveAction(row)
-                              : handleAction(row.tableData, "edit")
-                          }
-                          className={classes.actionButton}
-                          disable={
-                            (activeColumn !== null &&
-                              row.tableData !== activeColumn) ||
-                            showAdd
-                          }
-                        >
-                          {row.tableData === activeColumn ? (
-                            <CheckIcon />
-                          ) : (
+                        {editable.onUpdate &&
+                        (!actionType || row.tableData !== activeColumn) ? (
+                          <IconButton
+                            onClick={() => handleAction(row.tableData, "edit")}
+                            className={classes.actionButton}
+                            disable={
+                              (activeColumn !== null &&
+                                row.tableData !== activeColumn) ||
+                              showAdd
+                            }
+                          >
                             <EditIcon />
-                          )}
-                        </IconButton>
+                          </IconButton>
+                        ) : null}
                         {/* </Tooltip>
                       <Tooltip
                         label={
                           row.tableData === activeColumn ? "Cancel" : "Delete"
                         }
                       > */}
-                        <IconButton
-                          onClick={() =>
-                            row.tableData === activeColumn
-                              ? handleCancelAction()
-                              : handleAction(row.tableData, "delete")
-                          }
-                          className={classes.actionButton}
-                          disable={
-                            (activeColumn !== null &&
-                              row.tableData !== activeColumn) ||
-                            showAdd
-                          }
-                        >
-                          {row.tableData === activeColumn ? (
-                            <CloseIcon />
-                          ) : (
+                        {editable.onDelete &&
+                        (!actionType || row.tableData !== activeColumn) ? (
+                          <IconButton
+                            onClick={() =>
+                              handleAction(row.tableData, "delete")
+                            }
+                            className={classes.actionButton}
+                            disable={
+                              (activeColumn !== null &&
+                                row.tableData !== activeColumn) ||
+                              showAdd
+                            }
+                          >
                             <DeleteIcon />
-                          )}
-                        </IconButton>
+                          </IconButton>
+                        ) : null}
                         {/* </Tooltip> */}
                       </div>
                     </td>
@@ -570,7 +580,6 @@ const TableView = props => {
               <tr>
                 <td
                   className={`${classes.tableCell} ${classes.tableActionCell}`}
-                  style={{ width: 96 }}
                 >
                   <div style={{ display: "flex" }}>
                     {/* <Tooltip label="Save"> */}
@@ -762,9 +771,9 @@ TableView.propTypes = {
     column: PropTypes.string.isRequired
   }),
   editable: PropTypes.shape({
-    onAdd: PropTypes.func.isRequired,
-    onUpdate: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired
+    onAdd: PropTypes.func,
+    onUpdate: PropTypes.func,
+    onDelete: PropTypes.func
   })
 };
 
