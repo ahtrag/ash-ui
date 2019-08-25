@@ -205,6 +205,14 @@ const createRipple = e => {
   animationFrame = window.requestAnimationFrame(animation);
 };
 
+function renderClassName() {
+  return [...arguments].filter(value => Boolean(value)).join(" ");
+}
+
+function renderStyle() {
+  return Object.assign({}, ...arguments);
+}
+
 export {
   isStringEmptyOrInvalid,
   isArrayEmptyOrInvalid,
@@ -218,5 +226,7 @@ export {
   invalidUserName,
   invalidEmail,
   invalidPassword,
-  createRipple
+  createRipple,
+  renderClassName,
+  renderStyle
 };
