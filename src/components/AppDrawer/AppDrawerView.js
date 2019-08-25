@@ -129,6 +129,11 @@ AppDrawerView.propTypes = {
   profile: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 
   /**
+   * Show menu drawer
+   */
+  showMenu: PropTypes.bool,
+
+  /**
    * Override default styles with className
    */
   className: PropTypes.string,

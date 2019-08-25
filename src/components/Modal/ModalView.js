@@ -117,7 +117,7 @@ ModalView.propTypes = {
   ]).isRequired,
 
   /**
-   * Header of Modal
+   * Footer of Modal
    */
   footer: PropTypes.oneOfType([
     PropTypes.string,
@@ -126,7 +126,7 @@ ModalView.propTypes = {
   ]),
 
   /**
-   * Function onClick open modal
+   * Flag of showing modal
    */
   show: PropTypes.bool,
 

@@ -387,9 +387,7 @@ const TableView = props => {
                 <tr key={row.tableData}>
                   {editable ? (
                     <td
-                      className={`${classes.tableCell} ${
-                        classes.tableActionCell
-                      }`}
+                      className={`${classes.tableCell} ${classes.tableActionCell}`}
                       style={{ width: 96 }}
                     >
                       <div style={{ display: "flex" }}>
