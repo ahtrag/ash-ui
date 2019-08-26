@@ -5,6 +5,8 @@ import { renderClassName, renderStyle } from "../../utils/constants";
 
 const useStyles = createUseStyles({
   thumbnail: {
+    display: "flex",
+    alignItems: "center",
     width: "100%",
     height: props => props.height,
     backgroundColor: props => props.color,
@@ -46,7 +48,8 @@ const ThumbnailView = props => {
 
 ThumbnailView.defaultProps = {
   color: "transparent",
-  position: "right"
+  position: "right",
+  height: 150
 };
 
 ThumbnailView.propTypes = {
