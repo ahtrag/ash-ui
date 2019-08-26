@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import DrawerDefault from "./DrawerDefault";
-import DrawerPermanent from "./DrawerPermanent";
+import DrawerTemporary from "./DrawerTemporary";
 
 const DrawerView = props => {
   const { variant, ...drawerProps } = props;
@@ -9,10 +9,10 @@ const DrawerView = props => {
   switch (variant) {
     case "default":
       return <DrawerDefault {...drawerProps} />;
-    case "permanent":
-      return <DrawerPermanent {...drawerProps} />;
+    case "temporary":
+      return <DrawerTemporary {...drawerProps} />;
     default:
-      return <DrawerDefault {...drawerProps} />;
+      return <DrawerTemporary {...drawerProps} />;
   }
 };
 
