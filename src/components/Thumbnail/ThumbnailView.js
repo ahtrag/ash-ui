@@ -5,12 +5,13 @@ import { createUseStyles } from "react-jss";
 const useStyles = createUseStyles({
   thumbnail: {
     width: "100%",
-    height: 150,
+    height: props => props.height,
     backgroundColor: props => props.color,
     backgroundImage: props => `url(${props.image})`,
     backgroundSize: "contain",
     backgroundRepeat: "no-repeat",
-    backgroundPosition: "right 10px center"
+    backgroundPosition: props =>
+      props.position === "center" ? "center" : `${props.position} 10px center`
   },
   thumbnailTitle: {
     color: "#FFFFFF",
@@ -19,8 +20,8 @@ const useStyles = createUseStyles({
 });
 
 const ThumbnailView = props => {
-  const { title } = props;
-  const classes = useStyles(props);
+  const { title, className, style, ...otherProps } = props;
+  const classes = useStyles(otherProps);
   return (
     <div className={classes.thumbnail}>
       <h1 className={classes.thumbnailTitle}>{title}</h1>
@@ -29,7 +30,8 @@ const ThumbnailView = props => {
 };
 
 ThumbnailView.defaultProps = {
-  color: "transparent"
+  color: "transparent",
+  position: "right"
 };
 
 ThumbnailView.propTypes = {
@@ -46,7 +48,33 @@ ThumbnailView.propTypes = {
   /**
    * URL of Thumbnail
    */
-  image: PropTypes.string
+  image: PropTypes.string.isRequired,
+
+  /**
+   * Position of the image
+   */
+  position: PropTypes.oneOf(["left", "center", "right"]),
+
+  /**
+   * Height of Thumbnail
+   */
+  height: PropTypes.number.isRequired,
+
+  /**
+   * Override default styles with className
+   */
+  className: PropTypes.shape({
+    root: PropTypes.string,
+    title: PropTypes.string
+  }),
+
+  /**
+   * Override default styles with style
+   */
+  style: PropTypes.shape({
+    root: PropTypes.object,
+    title: PropTypes.object
+  })
 };
 
 export default ThumbnailView;
