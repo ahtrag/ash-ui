@@ -1,5 +1,58 @@
 import moment from "moment";
 
+const createRipple = e => {
+  const button = e.currentTarget;
+  const rippleRoot = button.firstElementChild;
+  const newElement = document.createElement("span");
+
+  rippleRoot.append(newElement);
+
+  const x = e.pageX - button.offsetLeft;
+  const y = e.pageY - button.offsetTop;
+  const duration = 400;
+  let animationFrame, animationStart;
+
+  const animation = time => {
+    if (!animationStart) {
+      animationStart = time;
+    }
+
+    const frame = time - animationStart;
+
+    if (frame < duration) {
+      var easing = (frame / duration) * (2 - frame / duration);
+
+      var circle = `circle at ${x}px ${y}px`;
+      var color = `rgba(0, 0, 0, ${0.3 * (1 - easing)})`;
+      var stop = `${100 * easing}%`;
+
+      newElement.style.cssText = `
+        display: block; 
+        position: relative; 
+        height: 100%; 
+        width: 100%; 
+        background-image: radial-gradient(${circle}, ${color} ${stop}, transparent ${stop})
+      `;
+
+      animationFrame = window.requestAnimationFrame(animation);
+    } else {
+      newElement.parentNode.removeChild(newElement);
+
+      window.cancelAnimationFrame(animationFrame);
+    }
+  };
+
+  animationFrame = window.requestAnimationFrame(animation);
+};
+
+function renderClassName() {
+  return [...arguments].filter(value => Boolean(value)).join(" ");
+}
+
+function renderStyle() {
+  return Object.assign({}, ...arguments);
+}
+
 const isStringEmptyOrInvalid = stringToCheck => {
   if (!Boolean(stringToCheck.toString().trim()) || !Boolean(stringToCheck)) {
     return true;
@@ -159,59 +212,6 @@ const invalidPassword = password => {
   }
   return "Password can not be empty";
 };
-
-const createRipple = e => {
-  const button = e.currentTarget;
-  const rippleRoot = button.firstElementChild;
-  const newElement = document.createElement("span");
-
-  rippleRoot.append(newElement);
-
-  const x = e.pageX - button.offsetLeft;
-  const y = e.pageY - button.offsetTop;
-  const duration = 400;
-  let animationFrame, animationStart;
-
-  const animation = time => {
-    if (!animationStart) {
-      animationStart = time;
-    }
-
-    const frame = time - animationStart;
-
-    if (frame < duration) {
-      var easing = (frame / duration) * (2 - frame / duration);
-
-      var circle = `circle at ${x}px ${y}px`;
-      var color = `rgba(0, 0, 0, ${0.3 * (1 - easing)})`;
-      var stop = `${100 * easing}%`;
-
-      newElement.style.cssText = `
-        display: block; 
-        position: relative; 
-        height: 100%; 
-        width: 100%; 
-        background-image: radial-gradient(${circle}, ${color} ${stop}, transparent ${stop})
-      `;
-
-      animationFrame = window.requestAnimationFrame(animation);
-    } else {
-      newElement.parentNode.removeChild(newElement);
-
-      window.cancelAnimationFrame(animationFrame);
-    }
-  };
-
-  animationFrame = window.requestAnimationFrame(animation);
-};
-
-function renderClassName() {
-  return [...arguments].filter(value => Boolean(value)).join(" ");
-}
-
-function renderStyle() {
-  return Object.assign({}, ...arguments);
-}
 
 export {
   isStringEmptyOrInvalid,

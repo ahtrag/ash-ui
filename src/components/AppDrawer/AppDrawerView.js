@@ -4,6 +4,7 @@ import { createUseStyles } from "react-jss";
 import IconButton from "../IconButton/IconButtonView";
 import Drawer from "../Drawer/DrawerView";
 import MenuIcon from "mdi-react/MenuIcon";
+import { renderClassName } from "../../utils/constants";
 
 const drawerWidth = 240;
 
@@ -90,9 +91,10 @@ const AppDrawerView = props => {
         />
       ) : null}
       <div
-        className={`${classes.appWraper} ${
+        className={renderClassName(
+          classes.appWraper,
           state.isOpen ? classes.drawerOpen : classes.drawerClose
-        }`}
+        )}
       >
         <div className={defaultStyles} style={style}>
           <div className={classes.justifyRight}>

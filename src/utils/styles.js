@@ -215,7 +215,7 @@ const stylesProps = {
   }
 };
 
-const breakpoints = {
+export const breakpoints = {
   up: key => `@media (min-width: ${stylesProps[key].minWidth})`,
   down: key => {
     if (key === "xl") {
