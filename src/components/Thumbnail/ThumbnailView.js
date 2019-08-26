@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
+import { renderClassName, renderStyle } from "../../utils/constants";
 
 const useStyles = createUseStyles({
   thumbnail: {
@@ -23,8 +24,22 @@ const ThumbnailView = props => {
   const { title, className, style, ...otherProps } = props;
   const classes = useStyles(otherProps);
   return (
-    <div className={classes.thumbnail}>
-      <h1 className={classes.thumbnailTitle}>{title}</h1>
+    <div
+      className={renderClassName(
+        classes.thumbnail,
+        className && className.root
+      )}
+      style={renderStyle(style && style.root)}
+    >
+      <h1
+        className={renderClassName(
+          classes.thumbnailTitle,
+          className && className.title
+        )}
+        style={renderStyle(style && style.title)}
+      >
+        {title}
+      </h1>
     </div>
   );
 };
