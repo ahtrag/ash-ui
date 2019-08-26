@@ -12,20 +12,47 @@ const DrawerView = props => {
     case "temporary":
       return <DrawerTemporary {...drawerProps} />;
     default:
-      return <DrawerTemporary {...drawerProps} />;
+      return <DrawerDefault {...drawerProps} />;
   }
+};
+
+DrawerView.defaultProps = {
+  variant: "default"
 };
 
 DrawerView.propTypes = {
   /**
+   * Variant of Drawer
+   */
+  variant: PropTypes.oneOf(["default", "temporary"]),
+
+  /**
+   * Toggle Drawer open
+   */
+  isOpen: PropTypes.bool.isRequired,
+
+  /**
+   * Width of the Drawer
+   */
+  width: PropTypes.number,
+
+  /**
    * Override default styles with className
    */
-  className: PropTypes.string,
+  className: PropTypes.shape({
+    root: PropTypes.string,
+    listItem: PropTypes.string,
+    link: PropTypes.string
+  }),
 
   /**
    * Override default styles with style
    */
-  style: PropTypes.object,
+  style: PropTypes.shape({
+    root: PropTypes.object,
+    listItem: PropTypes.object,
+    link: PropTypes.object
+  }),
 
   /**
    * Event handler onClick at back button
@@ -39,10 +66,14 @@ DrawerView.propTypes = {
    * 3. to      : string of route
    * 4. divider : boolean of divider
    */
-  menuList: PropTypes.shape({
-    data: PropTypes.arrayOf(PropTypes.object),
-    className: PropTypes.string
-  })
+  menuList: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      icon: PropTypes.element,
+      to: PropTypes.string,
+      divider: PropTypes.bool
+    })
+  ).isRequired
 };
 
 export default DrawerView;

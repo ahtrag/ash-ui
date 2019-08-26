@@ -3,11 +3,9 @@ import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
 import { Link } from "react-router-dom";
 import { breakpoints } from "../../utils/styles";
-import { renderClassName } from "../../utils/constants";
+import { renderClassName, renderStyle } from "../../utils/constants";
 import { CSSTransition } from "react-transition-group";
 import Divider from "../Divider";
-
-const width = 240;
 
 const useStyles = createUseStyles({
   "@global": {
@@ -66,7 +64,7 @@ const useStyles = createUseStyles({
   },
   drawer: {
     height: "100%",
-    width,
+    width: props => props.width,
     transform: "translateX(-175px)",
     transition: "transform 0.3s ease-in-out",
     backgroundColor: "#FFFFFF",
@@ -90,8 +88,8 @@ const useStyles = createUseStyles({
 });
 
 const DrawerTemporary = props => {
-  const classes = useStyles();
-  const { menuList, onClose, isOpen } = props;
+  const { menuList, onClose, isOpen, className, style, ...otherProps } = props;
+  const classes = useStyles(otherProps);
   return (
     <div>
       <CSSTransition
@@ -106,24 +104,36 @@ const DrawerTemporary = props => {
         <div className={classes.drawerWrapper}>
           <div
             className={renderClassName(classes.overlay)}
-            onClick={e => {
-              Boolean(onClose) && onClose(e);
-            }}
+            onClick={e => Boolean(onClose) && onClose(e)}
           />
 
-          <div className={classes.drawer}>
+          <div
+            className={renderClassName(
+              classes.drawer,
+              className && className.root
+            )}
+            style={renderStyle(style && style.root)}
+          >
             {menuList ? (
               <ul>
-                {menuList.data.map(nav => (
+                {menuList.map(nav => (
                   <Fragment key={nav.label}>
                     <li
                       className={renderClassName(
                         classes.drawerNav,
-                        menuList.className
+                        className && className.listItem
                       )}
+                      style={renderStyle(style && style.listItem)}
                     >
                       {nav.icon}
-                      <Link to={nav.url} className={classes.drawerNavLink}>
+                      <Link
+                        to={nav.url}
+                        className={renderClassName(
+                          classes.drawerNavLink,
+                          className && className.link
+                        )}
+                        style={renderStyle(style && style.link)}
+                      >
                         {nav.label}
                       </Link>
                     </li>
@@ -141,9 +151,41 @@ const DrawerTemporary = props => {
   );
 };
 
+DrawerTemporary.defaultProps = {
+  width: 200
+};
+
 DrawerTemporary.propTypes = {
   /**
-   * Event handler onClick overlay
+   * Toggle Drawer open
+   */
+  isOpen: PropTypes.bool.isRequired,
+
+  /**
+   * Width of the Drawer
+   */
+  width: PropTypes.number,
+
+  /**
+   * Override default styles with className
+   */
+  className: PropTypes.shape({
+    root: PropTypes.string,
+    listItem: PropTypes.string,
+    link: PropTypes.string
+  }),
+
+  /**
+   * Override default styles with style
+   */
+  style: PropTypes.shape({
+    root: PropTypes.object,
+    listItem: PropTypes.object,
+    link: PropTypes.object
+  }),
+
+  /**
+   * Event handler onClick at back button
    */
   onClose: PropTypes.func,
 
@@ -154,10 +196,14 @@ DrawerTemporary.propTypes = {
    * 3. to      : string of route
    * 4. divider : boolean of divider
    */
-  menuList: PropTypes.shape({
-    data: PropTypes.arrayOf(PropTypes.object),
-    className: PropTypes.string
-  })
+  menuList: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      icon: PropTypes.element,
+      to: PropTypes.string,
+      divider: PropTypes.bool
+    })
+  ).isRequired
 };
 
 export default DrawerTemporary;
