@@ -127,7 +127,7 @@ const DrawerTemporary = props => {
                     >
                       {nav.icon}
                       <Link
-                        to={nav.url}
+                        to={nav.to}
                         className={renderClassName(
                           classes.drawerNavLink,
                           className && className.link
