@@ -29,7 +29,7 @@ const useStyles = createUseStyles({
   },
   inputLabel: {
     position: "absolute",
-    top: 16,
+    top: 10,
     left: 8,
     zIndex: 5,
     transform: "scale(1)",
@@ -43,10 +43,11 @@ const useStyles = createUseStyles({
     left: 8
   },
   select: {
+    color: "currentColor",
     position: "relative",
     backgroundColor: "transparent",
     minWidth: 125,
-    minHeight: 50,
+    minHeight: 40,
     width: "100%",
     padding: 8,
     boxSizing: "border-box",
@@ -55,16 +56,10 @@ const useStyles = createUseStyles({
       outline: "none"
     }
   },
-  extraStart: {
+  extra: {
     display: "flex",
     marginLeft: 8,
-    marginRight: 16,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  extraEnd: {
-    display: "flex",
-    marginLeft: 16,
+    marginRight: 8,
     alignItems: "center",
     justifyContent: "center"
   },
@@ -123,7 +118,7 @@ const SelectOutlined = props => {
         </legend>
       </fieldset>
       {extra && extra.start && (
-        <div className={classes.extraStart}>{extra.start}</div>
+        <div className={classes.extra}>{extra.start}</div>
       )}
       <label
         ref={labelRef}
@@ -146,9 +141,7 @@ const SelectOutlined = props => {
       >
         {children}
       </select>
-      {extra && extra.end && (
-        <div className={classes.extraEnd}>{extra.end}</div>
-      )}
+      {extra && extra.end && <div className={classes.extra}>{extra.end}</div>}
     </div>
   );
 };

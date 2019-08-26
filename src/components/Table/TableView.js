@@ -17,6 +17,7 @@ import Select from "../Select";
 import IconButton from "../IconButton";
 // import Tooltip from "../Tooltip";
 import { createUseStyles } from "react-jss";
+import { renderClassName, renderStyle } from "../../utils/constants";
 
 const useStyles = createUseStyles({
   root: {
@@ -47,14 +48,13 @@ const useStyles = createUseStyles({
         visibility: "visible"
       },
       "& $tableHeadColumnLabel": {
-        color: "black"
+        color: "currentColor"
       }
     }
   },
   tableHeadColumnLabel: {
     fontWeight: 400,
-    fontSize: 15,
-    color: "gray"
+    fontSize: 15
   },
   tableHeadColumnIcon: {
     opacity: 0,
@@ -72,7 +72,8 @@ const useStyles = createUseStyles({
     padding: "16px 40px 16px 16px",
     borderBottom: "1px solid #DDDDDD",
     textAlign: "left",
-    fontSize: 14
+    fontSize: 14,
+    color: "gray"
   },
   tableActionCell: {
     padding: 4,
@@ -90,10 +91,10 @@ const useStyles = createUseStyles({
     visibility: "visible"
   },
   activeColumn: {
-    color: "black"
+    color: "currentColor"
   },
   inactiveColumn: {
-    color: "rgba(0, 0, 0, 0.4)",
+    opacity: 0.2,
     cursor: "default"
   },
   descending: {
@@ -127,6 +128,7 @@ const TableView = props => {
     title,
     className,
     style,
+    styleOptions,
     disableEmptyRows,
     disableSearch,
     disableSort,
@@ -299,7 +301,10 @@ const TableView = props => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.header}>
+      <div
+        className={classes.header}
+        style={styleOptions ? styleOptions.tableHeader : null}
+      >
         <h3 className={classes.headerTitle}>{title}</h3>
         {!disableSearch ? (
           <TextInput
@@ -307,6 +312,7 @@ const TableView = props => {
             extra={{ start: <SearchIcon /> }}
             value={searchValue}
             onChange={handleChangeSearchValue}
+            style={styleOptions ? styleOptions.input : null}
             noMargin
           />
         ) : null}
@@ -316,22 +322,30 @@ const TableView = props => {
             onClick={() => setShowAdd(prevShow => !prevShow)}
             disable={Boolean(actionType) && Boolean(activeColumn)}
             className={classes.actionButton}
+            style={styleOptions ? styleOptions.action : null}
           >
             <PlusCircleIcon />
           </IconButton>
         ) : // </Tooltip>
         null}
       </div>
-      <div className={classes.body}>
+      <div
+        className={classes.body}
+        style={styleOptions ? styleOptions.tableBody : null}
+      >
         <table
-          className={`${classes.table}${className ? ` ${className}` : ""}`}
+          className={renderClassName(classes.table, className)}
           style={style}
         >
           <thead>
             <tr>
               {editable && (editable.onUpdate || editable.onDelete) ? (
                 <th
-                  className={`${classes.tableCell} ${classes.tableActionCell}`}
+                  className={renderClassName(
+                    classes.tableCell,
+                    classes.tableActionCell
+                  )}
+                  style={styleOptions ? styleOptions.head : null}
                 >
                   <div className={classes.tableHeadColumn}>
                     <h4 className={classes.tableHeadColumnLabel}>Actions</h4>
@@ -341,12 +355,22 @@ const TableView = props => {
               {columns.map(column => (
                 <th
                   key={column.key}
-                  className={`${classes.tableCell}${
-                    column.type === "numeric" ? ` ${classes.numeric}` : ""
-                  }`}
+                  className={renderClassName(
+                    classes.tableCell,
+                    column.type === "numeric" && classes.numeric
+                  )}
+                  style={renderStyle(
+                    styleOptions && styleOptions.head,
+                    column.styleOptions && column.styleOptions.head
+                  )}
                 >
                   <div
                     className={classes.tableHeadColumn}
+                    style={renderStyle(
+                      column.type === "numeric" && {
+                        flexDirection: "row-reverse"
+                      }
+                    )}
                     onClick={
                       !disableSort
                         ? () => {
@@ -360,49 +384,32 @@ const TableView = props => {
                         : null
                     }
                   >
-                    {column.type === "numeric" && !disableSort ? (
-                      <SortAscendingIcon
-                        className={`${classes.tableHeadColumnIcon}${
-                          column.key === sortColumn
-                            ? ` ${classes.activeIcon}`
-                            : ""
-                        }${
-                          (column.key !== sortColumn &&
-                            sortType === "ascending") ||
-                          (column.key === sortColumn &&
-                            sortType === "descending")
-                            ? ` ${classes.descending}`
-                            : ""
-                        }`}
-                        style={{ marginRight: 16 }}
-                      />
-                    ) : null}
                     <h4
-                      className={`${classes.tableHeadColumnLabel}${
-                        column.key === sortColumn
-                          ? ` ${classes.activeColumn}`
-                          : ""
-                      }`}
+                      className={renderClassName(
+                        classes.tableHeadColumnLabel,
+                        column.key === sortColumn && classes.activeColumn
+                      )}
                     >
                       {column.label}
                     </h4>
-                    {column.type === "numeric" || disableSort ? null : (
+                    {!disableSort ? (
                       <SortAscendingIcon
-                        className={`${classes.tableHeadColumnIcon}${
-                          column.key === sortColumn
-                            ? ` ${classes.activeIcon}`
-                            : ""
-                        }${
-                          (column.key !== sortColumn &&
+                        className={renderClassName(
+                          classes.tableHeadColumnIcon,
+                          column.key === sortColumn && classes.activeIcon,
+                          ((column.key !== sortColumn &&
                             sortType === "ascending") ||
-                          (column.key === sortColumn &&
-                            sortType === "descending")
-                            ? ` ${classes.descending}`
-                            : ""
-                        }`}
-                        style={{ marginLeft: 16 }}
+                            (column.key === sortColumn &&
+                              sortType === "descending")) &&
+                            classes.descending
+                        )}
+                        style={
+                          column.type === "numeric"
+                            ? { marginRight: 16 }
+                            : { marginLeft: 16 }
+                        }
                       />
-                    )}
+                    ) : null}
                   </div>
                 </th>
               ))}
@@ -415,10 +422,26 @@ const TableView = props => {
                 !disablePagination ? visibleData * (page + 1) : undefined
               )
               .map((row, index) => (
-                <tr key={row.tableData}>
+                <tr
+                  key={row.tableData}
+                  className={renderClassName(
+                    ((activeColumn !== null &&
+                      row.tableData !== activeColumn) ||
+                      showAdd) &&
+                      classes.inactiveColumn
+                  )}
+                >
                   {editable ? (
                     <td
-                      className={`${classes.tableCell} ${classes.tableActionCell}`}
+                      className={renderClassName(
+                        classes.tableCell,
+                        classes.tableActionCell
+                      )}
+                      style={renderStyle(
+                        (!actionType || row.tableData !== activeColumn) &&
+                          styleOptions &&
+                          styleOptions.row
+                      )}
                     >
                       <div style={{ display: "flex" }}>
                         {actionType && row.tableData === activeColumn ? (
@@ -447,6 +470,9 @@ const TableView = props => {
                           <IconButton
                             onClick={() => handleAction(row.tableData, "edit")}
                             className={classes.actionButton}
+                            style={renderStyle(
+                              styleOptions && styleOptions.action
+                            )}
                             disable={
                               (activeColumn !== null &&
                                 row.tableData !== activeColumn) ||
@@ -469,6 +495,9 @@ const TableView = props => {
                               handleAction(row.tableData, "delete")
                             }
                             className={classes.actionButton}
+                            style={renderStyle(
+                              styleOptions && styleOptions.action
+                            )}
                             disable={
                               (activeColumn !== null &&
                                 row.tableData !== activeColumn) ||
@@ -487,15 +516,17 @@ const TableView = props => {
                       columns.map(column => (
                         <td
                           key={`${row.tableData}${column.key}`}
-                          className={`${classes.tableCell}${
-                            column.type === "numeric"
-                              ? ` ${classes.numeric}`
-                              : ""
-                          }`}
+                          className={renderClassName(
+                            classes.tableCell,
+                            column.type === "numeric" && classes.numeric
+                          )}
                         >
                           {column.type === "select" ? (
                             <Select
                               placeholder={column.label}
+                              style={renderStyle(
+                                styleOptions && styleOptions.input
+                              )}
                               value={
                                 JSON.stringify(inputValue[column.key])
                                   ? JSON.stringify(inputValue[column.key])
@@ -525,6 +556,9 @@ const TableView = props => {
                           ) : (
                             <TextInput
                               placeholder={column.label}
+                              style={renderStyle(
+                                styleOptions && styleOptions.input
+                              )}
                               type={
                                 column.type === "numeric" ? "number" : "text"
                               }
@@ -560,15 +594,11 @@ const TableView = props => {
                     columns.map(column => (
                       <td
                         key={`${row.tableData}${column.key}`}
-                        className={`${classes.tableCell}${
-                          column.type === "numeric" ? ` ${classes.numeric}` : ""
-                        }${
-                          (activeColumn !== null &&
-                            row.tableData !== activeColumn) ||
-                          showAdd
-                            ? ` ${classes.inactiveColumn}`
-                            : ""
-                        }`}
+                        className={renderClassName(
+                          classes.tableCell,
+                          column.type === "numeric" && classes.numeric
+                        )}
+                        style={renderStyle(styleOptions && styleOptions.row)}
                       >
                         {row[column.key]}
                       </td>
@@ -579,7 +609,10 @@ const TableView = props => {
             {showAdd ? (
               <tr>
                 <td
-                  className={`${classes.tableCell} ${classes.tableActionCell}`}
+                  className={renderClassName(
+                    classes.tableCell,
+                    classes.tableActionCell
+                  )}
                 >
                   <div style={{ display: "flex" }}>
                     {/* <Tooltip label="Save"> */}
@@ -603,9 +636,10 @@ const TableView = props => {
                 {columns.map(column => (
                   <td
                     key={`new${column.key}`}
-                    className={`${classes.tableCell}${
-                      column.type === "numeric" ? ` ${classes.numeric}` : ""
-                    }`}
+                    className={renderClassName(
+                      classes.tableCell,
+                      column.type === "numeric" && classes.numeric
+                    )}
                   >
                     {column.type === "select" ? (
                       <Select
@@ -683,7 +717,10 @@ const TableView = props => {
         </table>
       </div>
       {!disablePagination ? (
-        <div className={classes.footer}>
+        <div
+          className={classes.footer}
+          style={renderStyle(styleOptions && styleOptions.tableFooter)}
+        >
           <h5 className={classes.footerRowsText}>Rows</h5>
           <Select
             value={visibleData}
@@ -756,7 +793,11 @@ TableView.propTypes = {
       label: PropTypes.string.isRequired,
       key: PropTypes.string.isRequired,
       type: PropTypes.oneOf(["numeric", "select"]),
-      option: PropTypes.object
+      option: PropTypes.object,
+      styleOptions: PropTypes.shape({
+        head: PropTypes.object,
+        cell: PropTypes.object
+      })
     })
   ).isRequired,
   disableEmptyRows: PropTypes.bool,
@@ -766,6 +807,15 @@ TableView.propTypes = {
   title: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
   className: PropTypes.string,
   style: PropTypes.object,
+  styleOptions: PropTypes.shape({
+    tableHeader: PropTypes.object,
+    tableBody: PropTypes.object,
+    tableFooter: PropTypes.object,
+    input: PropTypes.object,
+    action: PropTypes.object,
+    head: PropTypes.object,
+    row: PropTypes.object
+  }),
   defaultSort: PropTypes.shape({
     type: PropTypes.oneOf(["ascending", "descending"]).isRequired,
     column: PropTypes.string.isRequired

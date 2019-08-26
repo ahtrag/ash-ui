@@ -35,7 +35,7 @@ const useStyles = createUseStyles({
     width: "100%"
   },
   disabled: {
-    color: "rgba(0, 0, 0, 0.3) !important",
+    color: "rgba(0, 0, 0, 0.3)",
     cursor: "default !important"
   }
 });
