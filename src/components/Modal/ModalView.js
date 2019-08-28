@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
+import { CSSTransition } from "react-transition-group";
 
 const useStyles = createUseStyles({
   root: {
@@ -13,21 +14,32 @@ const useStyles = createUseStyles({
     top: 0,
     left: 0,
     zIndex: 100,
-    opacity: 0,
-    visibility: "hidden",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
-    transition: "opacity 0.8s ease-in-out, visibility 0.8s ease-in-out"
+    alignItems: "center"
   },
-  show: {
-    opacity: 1,
-    visibility: "visible",
+  modalEnterActive: {
+    "& $overlay": {
+      opacity: 1,
+      visibility: "visible"
+    },
+    "& $modal": {
+      transform: "translateY(0)"
+    }
+  },
+  modalEnterDone: {
+    "& $overlay": {
+      opacity: 1,
+      visibility: "visible"
+    },
     "& $modal": {
       transform: "translateY(0)"
     }
   },
   overlay: {
+    opacity: 0,
+    visibility: "hidden",
+    transition: "opacity 0.8s ease-in-out, visibility 0.8s ease-in-out",
     position: "absolute",
     top: 0,
     left: 0,
@@ -70,19 +82,25 @@ const useStyles = createUseStyles({
 });
 
 const ModalView = props => {
-  const { className, style, show, close, children, header, footer } = props;
+  const { className, style, show, onClose, children, header, footer } = props;
   const classes = useStyles();
 
-  const defaultStyles = [classes.root, className]
+  const defaultStyles = [classes.root, classes.modalWrapper, className]
     .filter(value => Boolean(value))
     .join(" ");
 
   return (
-    <div className={defaultStyles}>
-      <div
-        className={`${classes.modalWrapper}${show ? ` ${classes.show}` : ""}`}
-      >
-        <div className={classes.overlay} onClick={close} />
+    <CSSTransition
+      in={show}
+      timeout={300}
+      classNames={{
+        enterDone: classes.modalEnterDone,
+        enterActive: classes.modalEnterActive
+      }}
+      unmountOnExit
+    >
+      <div className={defaultStyles}>
+        <div className={classes.overlay} onClick={onClose} />
         <div className={classes.modal} style={style}>
           <div className={classes.modalHeader}>{header}</div>
           <div className={classes.modalBody}>
@@ -91,7 +109,7 @@ const ModalView = props => {
           <div className={classes.modalFooter}>{footer}</div>
         </div>
       </div>
-    </div>
+    </CSSTransition>
   );
 };
 
@@ -126,14 +144,14 @@ ModalView.propTypes = {
   ]),
 
   /**
-   * Flag of showing modal
+   * Toggle of showing modal
    */
   show: PropTypes.bool,
 
   /**
    * Function close modal onClick overlay
    */
-  close: PropTypes.func,
+  onClose: PropTypes.func,
 
   /**
    * Override default styles with className
