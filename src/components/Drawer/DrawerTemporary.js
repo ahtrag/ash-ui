@@ -88,12 +88,12 @@ const useStyles = createUseStyles({
 });
 
 const DrawerTemporary = props => {
-  const { menuList, onClose, isOpen, className, style, ...otherProps } = props;
+  const { menuList, onClose, show, className, style, ...otherProps } = props;
   const classes = useStyles(otherProps);
   return (
     <div>
       <CSSTransition
-        in={isOpen}
+        in={show}
         timeout={300}
         unmountOnExit
         classNames={{
@@ -159,7 +159,7 @@ DrawerTemporary.propTypes = {
   /**
    * Toggle Drawer open
    */
-  isOpen: PropTypes.bool.isRequired,
+  show: PropTypes.bool.isRequired,
 
   /**
    * Width of the Drawer

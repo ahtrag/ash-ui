@@ -1,80 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import { createUseStyles } from "react-jss";
-import { colors } from "../../utils/styles";
-
-const useStyles = createUseStyles({
-  "@keyframes rotate": {
-    from: {
-      transform: "rotate(0deg)"
-    },
-    to: {
-      transform: "rotate(360deg)"
-    }
-  },
-  "@keyframes dash": {
-    "0%": {
-      strokeDasharray: "1,200",
-      strokeDashoffset: 0
-    },
-    "50%": {
-      strokeDasharray: "89,200",
-      strokeDashoffset: -35
-    },
-    "100%": {
-      strokeDasharray: "89,200",
-      strokeDashoffset: -124
-    }
-  },
-  circular: {
-    height: 80,
-    width: 80,
-    position: "relative",
-    animation: "$rotate 2s linear infinite"
-  },
-  circularPath: {
-    strokeDasharray: "1,200",
-    strokeDashoffset: 0,
-    animation: "$dash 1.5s ease-in-out infinite",
-    strokeLinecap: "round",
-    transition: "stroke 0.3s ease-in-out"
-  }
-});
+import LoadingDefault from "./LoadingDefault";
+import LoadingWave from "./LoadingWave";
 
 const LoadingView = props => {
-  const { random, color } = props;
-  const classes = useStyles();
-  const [stroke, setStroke] = useState(color);
+  const { variant, ...loadingProps } = props;
 
-  useEffect(() => {
-    let randomColors = 0;
-
-    if (random) {
-      const colorsArray = Object.values(colors);
-      randomColors = window.setInterval(() => {
-        setStroke(colorsArray[Math.floor(Math.random() * colorsArray.length)]);
-      }, 3000);
-    }
-
-    return () => {
-      window.clearInterval(randomColors);
-    };
-  }, [random]);
-
-  return (
-    <svg className={classes.circular}>
-      <circle
-        className={classes.circularPath}
-        cx="40"
-        cy="40"
-        r="20"
-        fill="none"
-        stroke={stroke}
-        strokeWidth="3"
-        strokeMiterlimit="10"
-      />
-    </svg>
-  );
+  switch (variant) {
+    case "default":
+      return <LoadingDefault {...loadingProps} />;
+    case "wave":
+      return <LoadingWave {...loadingProps} />;
+    default:
+      return <LoadingDefault {...loadingProps} />;
+  }
 };
 
 LoadingView.defaultProps = {
@@ -92,7 +31,25 @@ LoadingView.propTypes = {
   /**
    * Color of the loading
    */
-  color: PropTypes.string
+  color: PropTypes.string,
+
+  /**
+   * LoadingWave Props width of bars.
+   * Default 50px.
+   */
+  width: PropTypes.string,
+
+  /**
+   * LoadingWave Props height of bars.
+   * Default 300px.
+   */
+  height: PropTypes.string,
+
+  /**
+   * LoadingWave Props backgriund of bars and pages.
+   * Default white.
+   */
+  background: PropTypes.string
 };
 
 export default LoadingView;
