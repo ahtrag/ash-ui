@@ -1,7 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Ripple from "../Ripple";
+import Text from "../Text";
+import { Link } from "react-router-dom";
 import { createUseStyles } from "react-jss";
-import { createRipple } from "../../utils/constants";
+import { renderClassName } from "../../utils/constants";
 
 const useStyles = createUseStyles({
   button: {
@@ -14,22 +17,10 @@ const useStyles = createUseStyles({
     overflow: "hidden",
     "&:focus": {
       outline: "none"
-    },
-    "&:hover": {
-      "& $rippleRoot": {
-        backgroundColor: "rgba(0, 0, 0, 0.1)"
-      }
     }
   },
   outline: {
     border: "1px solid #9a7ba8"
-  },
-  rippleRoot: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    height: "100%",
-    width: "100%"
   },
   clWhite: {
     color: "white"
@@ -48,37 +39,73 @@ const useStyles = createUseStyles({
   },
   rounded: {
     borderRadius: 4
+  },
+  fullWidth: {
+    width: "100%"
   }
 });
 
 const ButtonView = props => {
-  const { children, type, variant, className, style, onClick } = props;
+  const {
+    children,
+    type,
+    variant,
+    component,
+    href,
+    fullWidth,
+    rounded,
+    className,
+    style,
+    onClick
+  } = props;
   const classes = useStyles();
 
-  const defaultStyles = [
+  const defaultStyles = renderClassName(
     classes.button,
     variant === "outlined" ? classes.outline : "",
     variant === "contained" ? classes.clWhite : classes.clBlack,
     variant === "contained" ? classes.shadowLower : "",
     variant === "contained" ? classes.gradAsh : classes.bgTransparent,
-    classes.rounded,
+    fullWidth && component === "button" && classes.fullWidth,
+    rounded && classes.rounded,
     className
-  ]
-    .filter(value => Boolean(value))
-    .join(" ");
+  );
 
-  return (
+  return component === "a" ? (
+    <Link
+      to={href}
+      className={defaultStyles}
+      style={style}
+      onClick={e => {
+        Boolean(onClick) && onClick(e);
+      }}
+    >
+      <Ripple />
+      {typeof children === "string" ? (
+        <Text variant="button" color="currentColor" noMargin>
+          {children}
+        </Text>
+      ) : (
+        children
+      )}
+    </Link>
+  ) : (
     <button
       type={type}
       className={defaultStyles}
       style={style}
       onClick={e => {
-        createRipple(e);
         Boolean(onClick) && onClick(e);
       }}
     >
-      <span className={classes.rippleRoot} />
-      {children}
+      <Ripple />
+      {typeof children === "string" ? (
+        <Text variant="button" color="currentColor" noMargin>
+          {children}
+        </Text>
+      ) : (
+        children
+      )}
     </button>
   );
 };
@@ -86,7 +113,9 @@ const ButtonView = props => {
 ButtonView.defaultProps = {
   type: "button",
   variant: "text",
-  className: ""
+  component: "button",
+  fullWidth: false,
+  rounded: true
 };
 
 ButtonView.propTypes = {
@@ -109,9 +138,31 @@ ButtonView.propTypes = {
   variant: PropTypes.oneOf(["contained", "outlined", "text"]),
 
   /**
+   * Component used by Button:
+   * 1. button
+   * 2. a
+   */
+  component: PropTypes.oneOf(["button", "a"]),
+
+  /**
    * Override default styles with className
    */
   className: PropTypes.string,
+
+  /**
+   * Hyperlink, only work when component props set to a
+   */
+  href: PropTypes.string,
+
+  /**
+   * If set to true, the Button will have 100% width
+   */
+  fullWidth: PropTypes.bool,
+
+  /**
+   * If set to true, the Button will have border-radius
+   */
+  rounded: PropTypes.bool,
 
   /**
    * Override default styles with inline style
