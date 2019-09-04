@@ -301,7 +301,7 @@ const globalStyles = {
       margin: 0,
       padding: 0,
       border: "none",
-      fontFamily: "'Roboto', sans-serif",
+      fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
       listStyle: "none",
       textDecoration: "none"
     },
