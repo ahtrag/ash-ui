@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
-import { createRipple } from "../../utils/constants";
+import Ripple from "../Ripple";
 
 const useStyles = createUseStyles({
   iconButton: {
@@ -17,22 +17,9 @@ const useStyles = createUseStyles({
     cursor: "pointer",
     overflow: "hidden",
     backgroundColor: "transparent",
-    transition: "background-color 0.3s ease-in-out",
     "&:focus": {
       outline: "none"
-    },
-    "&:hover": {
-      "& $rippleRoot": {
-        backgroundColor: "rgba(0, 0, 0, 0.1)"
-      }
     }
-  },
-  rippleRoot: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    height: "100%",
-    width: "100%"
   },
   disabled: {
     color: "rgba(0, 0, 0, 0.3)",
@@ -58,15 +45,12 @@ const IconButtonView = props => {
       onClick={
         !disable
           ? e => {
-              !disableRipple && createRipple(e);
               Boolean(onClick) && onClick(e);
             }
           : null
       }
     >
-      {disable || disableRipple ? null : (
-        <span className={classes.rippleRoot} />
-      )}
+      {disable || disableRipple ? null : <Ripple />}
       {children}
     </button>
   );
