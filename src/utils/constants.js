@@ -1,50 +1,3 @@
-import moment from "moment";
-
-const createRipple = e => {
-  const button = e.currentTarget;
-  const rippleRoot = button.firstElementChild;
-  const newElement = document.createElement("span");
-
-  rippleRoot.append(newElement);
-
-  const x = e.pageX - button.offsetLeft;
-  const y = e.pageY - button.offsetTop;
-  const duration = 400;
-  let animationFrame, animationStart;
-
-  const animation = time => {
-    if (!animationStart) {
-      animationStart = time;
-    }
-
-    const frame = time - animationStart;
-
-    if (frame < duration) {
-      var easing = (frame / duration) * (2 - frame / duration);
-
-      var circle = `circle at ${x}px ${y}px`;
-      var color = `rgba(0, 0, 0, ${0.3 * (1 - easing)})`;
-      var stop = `${100 * easing}%`;
-
-      newElement.style.cssText = `
-        display: block; 
-        position: relative; 
-        height: 100%; 
-        width: 100%; 
-        background-image: radial-gradient(${circle}, ${color} ${stop}, transparent ${stop})
-      `;
-
-      animationFrame = window.requestAnimationFrame(animation);
-    } else {
-      newElement.parentNode.removeChild(newElement);
-
-      window.cancelAnimationFrame(animationFrame);
-    }
-  };
-
-  animationFrame = window.requestAnimationFrame(animation);
-};
-
 function renderClassName() {
   return [...arguments].filter(value => Boolean(value)).join(" ");
 }
@@ -52,61 +5,6 @@ function renderClassName() {
 function renderStyle() {
   return Object.assign({}, ...arguments);
 }
-
-const isStringEmptyOrInvalid = stringToCheck => {
-  if (!Boolean(stringToCheck.toString().trim()) || !Boolean(stringToCheck)) {
-    return true;
-  }
-
-  return false;
-};
-
-const isArrayEmptyOrInvalid = arrayToCheck => {
-  if (!Boolean(arrayToCheck) || arrayToCheck.length < 1) {
-    return true;
-  }
-
-  return false;
-};
-
-const formatDateToReadableForm = date => {
-  if (!isStringEmptyOrInvalid(date)) {
-    return moment(date).format("ddd, DD MMM YYYY HH:mm");
-  }
-  return "";
-};
-
-const formatDateToReadableFormDate = date => {
-  if (!isStringEmptyOrInvalid(date)) {
-    return moment(date).format("DD-MMM-YYYY");
-  }
-  return "";
-};
-
-const formatDateToReadableFormMonth = date => {
-  if (!isStringEmptyOrInvalid(date)) {
-    return moment(date).format("MMM YYYY");
-  }
-  return "";
-};
-
-const getCurrentDateUtcFormat = () => {
-  return moment().format();
-};
-
-const sortArrayOfObjectByProp = (dataArrayObject, prop, orderType) => {
-  let res = [];
-  if (orderType === "desc") {
-    res = dataArrayObject.sort(function(a, b) {
-      return a[prop] > b[prop] ? -1 : a[prop] < b[prop] ? 1 : 0;
-    });
-  } else {
-    res = dataArrayObject.sort(function(a, b) {
-      return a[prop] < b[prop] ? -1 : a[prop] > b[prop] ? 1 : 0;
-    });
-  }
-  return res;
-};
 
 const randomString = (length = 6) => {
   let randomString = "";
@@ -195,7 +93,7 @@ const invalidPassword = password => {
   const regExSymbol = /[^a-zA-Z0-9]/g;
   const regExNumber = /[\d]/g;
 
-  if (!isStringEmptyOrInvalid(password)) {
+  if (password) {
     if (password.length >= 6) {
       if (regExCapital.test(password)) {
         if (regExSymbol.test(password)) {
@@ -214,19 +112,11 @@ const invalidPassword = password => {
 };
 
 export {
-  isStringEmptyOrInvalid,
-  isArrayEmptyOrInvalid,
-  formatDateToReadableForm,
-  formatDateToReadableFormDate,
-  formatDateToReadableFormMonth,
-  getCurrentDateUtcFormat,
-  sortArrayOfObjectByProp,
   randomString,
   removeDuplicates,
   invalidUserName,
   invalidEmail,
   invalidPassword,
-  createRipple,
   renderClassName,
   renderStyle
 };
