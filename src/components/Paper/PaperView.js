@@ -6,7 +6,7 @@ import { createUseStyles } from "react-jss";
 const useStyles = createUseStyles({
   root: {
     backgroundColor: "white",
-    borderRadius: 8
+    borderRadius: 4
   },
   shadowLower: {
     boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)"
