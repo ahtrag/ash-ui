@@ -1,0 +1,6 @@
+{
+  "name": "Radio",
+  "version": "0.0.1",
+  "private": true,
+  "main": "RadioView.js"
+}
