@@ -65,7 +65,7 @@ const DrawerDefault = props => {
 
   const defaultStyles = [
     styles.drawer,
-    props.isOpen ? styles.drawerOpen : styles.drawerClosed,
+    props.show ? styles.drawerOpen : styles.drawerClosed,
     className
   ]
     .filter(value => Boolean(value))
