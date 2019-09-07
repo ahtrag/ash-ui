@@ -4,7 +4,7 @@ import Paper from "../Paper";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
 import { CSSTransition } from "react-transition-group";
-import { renderStyle, renderClassName } from "../../utils/constants";
+import { renderStyle, renderClassName, offset } from "../../utils/constants";
 
 const useStyles = createUseStyles({
   root: {
@@ -35,7 +35,8 @@ const useStyles = createUseStyles({
     left: props => props.left,
     zIndex: 100,
     maxWidth: "calc(100% - 32px)",
-    maxHeight: 200,
+    minWidth: props => props.width,
+    maxHeight: "calc(100% - 32px)",
     transformOrigin: props => props.transformOrigin,
     transform: "scale(0)",
     opacity: 0,
@@ -65,23 +66,25 @@ const PopupView = props => {
   const styleProps = {
     top: 0,
     left: 0,
+    width: 0,
     transformOrigin: `${transformPosition.horizontal} ${transformPosition.vertical}`
   };
 
   if (element) {
-    styleProps.top = element.offsetTop;
-    styleProps.left = element.offsetLeft;
+    styleProps.top = offset(element).top;
+    styleProps.left = offset(element).left;
+    styleProps.width = offset(element).width;
 
     if (popupPosition.vertical === "center") {
-      styleProps.top = element.offsetTop + element.offsetHeight / 2;
+      styleProps.top = offset(element).top + offset(element).height / 2;
     } else if (popupPosition.vertical === "bottom") {
-      styleProps.top = element.offsetTop + element.offsetHeight;
+      styleProps.top = offset(element).top + offset(element).height;
     }
 
     if (popupPosition.horizontal === "center") {
-      styleProps.left = element.offsetLeft + element.offsetWidth / 2;
+      styleProps.left = offset(element).left + offset(element).width / 2;
     } else if (popupPosition.horizontal === "right") {
-      styleProps.left = element.offsetLeft + element.offsetWidth;
+      styleProps.left = offset(element).left + offset(element).width;
     }
   }
 
