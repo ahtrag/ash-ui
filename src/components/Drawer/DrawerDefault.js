@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { createUseStyles } from "react-jss";
-import { createRipple } from "../../utils/constants";
 import { Link } from "react-router-dom";
 import ChevronLeftIcon from "mdi-react/ChevronLeftIcon";
 
@@ -76,7 +75,6 @@ const DrawerDefault = props => {
         <div className={styles.buttonClose}>
           <IconButton
             onClick={e => {
-              createRipple(e);
               Boolean(onClose) && onClose(e);
             }}
           >
