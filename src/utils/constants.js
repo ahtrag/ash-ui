@@ -6,6 +6,25 @@ function renderStyle() {
   return Object.assign({}, ...arguments);
 }
 
+const offset = element => {
+  const elementOffset = {
+    top: element.offsetTop,
+    left: element.offsetLeft,
+    width: element.offsetWidth,
+    height: element.offsetHeight
+  };
+
+  let tempElement = element;
+
+  while (tempElement.offsetParent) {
+    tempElement = tempElement.offsetParent;
+    elementOffset.top += tempElement.offsetTop;
+    elementOffset.left += tempElement.offsetLeft;
+  }
+
+  return elementOffset;
+};
+
 const randomString = (length = 6) => {
   let randomString = "";
   while (randomString.length < length && length > 0) {
@@ -118,5 +137,6 @@ export {
   invalidEmail,
   invalidPassword,
   renderClassName,
-  renderStyle
+  renderStyle,
+  offset
 };
