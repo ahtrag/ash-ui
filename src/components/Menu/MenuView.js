@@ -35,12 +35,24 @@ const MenuView = props => {
     position,
     transformOrigin,
     onClose,
+    onSelect,
     className,
     style,
     classNameOptions,
-    styleOptions
+    styleOptions,
+    multiple
   } = props;
   const classes = useStyles();
+
+  const handleClick = (e, item) => {
+    if (onSelect) {
+      onSelect({ ...e, label: item.label });
+    }
+
+    if (!multiple) {
+      onClose();
+    }
+  };
 
   return (
     <Popup
@@ -54,9 +66,10 @@ const MenuView = props => {
       {items.map((item, index) => (
         <Button
           key={`menu-${item.label}-${index}`}
-          onClick={onClose}
+          onClick={e => handleClick(e, item)}
           component={item.href ? "a" : "button"}
           href={item.href}
+          value={item.value}
           rounded={false}
           className={renderClassName(
             classes.normal,
@@ -94,7 +107,7 @@ MenuView.propTypes = {
       label: PropTypes.string,
       helper: PropTypes.string,
       href: PropTypes.string,
-      onPress: PropTypes.func
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
     })
   ).isRequired,
   target: PropTypes.object,
@@ -107,6 +120,7 @@ MenuView.propTypes = {
     horizontal: PropTypes.oneOf(["left", "center", "right"])
   }),
   onClose: PropTypes.func,
+  onSelect: PropTypes.func,
   className: PropTypes.string,
   style: PropTypes.object,
   classNameOptions: PropTypes.shape({
@@ -114,7 +128,8 @@ MenuView.propTypes = {
   }),
   styleOptions: PropTypes.shape({
     paper: PropTypes.object
-  })
+  }),
+  multiple: PropTypes.bool
 };
 
 export default MenuView;
