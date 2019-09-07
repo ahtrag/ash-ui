@@ -59,7 +59,7 @@ const AppDrawerView = props => {
     title,
     className,
     style,
-    isOpen,
+    show,
     showMenu,
     profile,
     children,
@@ -77,7 +77,7 @@ const AppDrawerView = props => {
     .join(" ");
 
   const [state, setState] = useState({
-    isOpen,
+    show,
     showMenu
   });
 
@@ -85,23 +85,23 @@ const AppDrawerView = props => {
     <div className={classes.root}>
       {showMenu ? (
         <Drawer
-          isOpen={state.isOpen}
-          onClose={() => setState({ ...state, isOpen: false })}
+          show={state.show}
+          onClose={() => setState({ ...state, show: false })}
           menuList={menuList}
         />
       ) : null}
       <div
         className={renderClassName(
           classes.appWraper,
-          state.isOpen ? classes.drawerOpen : classes.drawerClose
+          state.show ? classes.drawerOpen : classes.drawerClose
         )}
       >
         <div className={defaultStyles} style={style}>
           <div className={classes.justifyRight}>
-            {state.showMenu && !state.isOpen ? (
+            {state.showMenu && !state.show ? (
               <IconButton
                 className={classes.button}
-                onClick={() => setState({ ...state, isOpen: !state.isOpen })}
+                onClick={() => setState({ ...state, show: !state.show })}
               >
                 <MenuIcon />
               </IconButton>
@@ -118,7 +118,7 @@ const AppDrawerView = props => {
 
 AppDrawerView.defaultProps = {
   showMenu: false,
-  isOpen: false
+  show: false
 };
 
 AppDrawerView.propTypes = {

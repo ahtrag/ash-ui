@@ -29,7 +29,7 @@ DrawerView.propTypes = {
   /**
    * Toggle Drawer open
    */
-  isOpen: PropTypes.bool.isRequired,
+  show: PropTypes.bool.isRequired,
 
   /**
    * Width of the Drawer
