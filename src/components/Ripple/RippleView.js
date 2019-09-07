@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect } from "react";
 import { createUseStyles } from "react-jss";
+import { offset } from "../../utils/constants";
 
 const useStyles = createUseStyles({
   "@keyframes ripple": {
@@ -58,15 +59,12 @@ const RippleView = props => {
   let i = 0;
 
   const createRipple = e => {
-    const {
-      offsetHeight,
-      offsetWidth,
-      offsetTop,
-      offsetLeft
-    } = rippleRootRef.current.offsetParent;
-    const posX = e.pageX - offsetLeft;
-    const posY = e.pageY - offsetTop;
-    const size = offsetWidth <= offsetHeight ? offsetHeight : offsetWidth;
+    const { height, width, top, left } = offset(
+      rippleRootRef.current.offsetParent
+    );
+    const posX = e.pageX - left;
+    const posY = e.pageY - top;
+    const size = width <= height ? height : width;
 
     const ripple = (
       <span
