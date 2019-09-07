@@ -40,9 +40,14 @@ TextInputView.propTypes = {
   id: PropTypes.string,
 
   /**
-   * Name of Select component as identifier
+   * Name of TextInput component as identifier
    */
   name: PropTypes.string,
+
+  /**
+   * Color of the TextInput border
+   */
+  color: PropTypes.string,
 
   /**
    * Placeholder of TextInput
@@ -88,6 +93,11 @@ TextInputView.propTypes = {
    * event handler onChange value as function
    */
   onChange: PropTypes.func,
+
+  /**
+   * event handler onfocus value as function
+   */
+  onFocus: PropTypes.func,
 
   /**
    * fullWidth enabled, default : false
