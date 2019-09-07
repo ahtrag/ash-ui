@@ -1,12 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
+import Menu from "../Menu";
+import Text from "../Text";
+import MenuDownIcon from "mdi-react/MenuDownIcon";
 import { createUseStyles } from "react-jss";
+import { renderClassName } from "../../utils/constants";
 
 const useStyles = createUseStyles({
-  inputWrapper: {
+  selectWrapper: {
     marginTop: 16,
     marginBottom: 4,
+    minWidth: props => (props.multiple ? "auto" : 120),
+    width: props =>
+      props.multiple ? (props.width ? props.width : 120) : "auto",
     display: "inline-flex",
+    flexDirection: "column",
     position: "relative"
   },
   inputField: {
@@ -15,10 +24,15 @@ const useStyles = createUseStyles({
     left: 0,
     height: "100%",
     width: "100%",
-    padding: "0 8px",
+    paddingLeft: 8,
     margin: 0,
     border: "1px solid #A7A7A7",
-    boxSizing: "border-box"
+    borderRadius: 2,
+    boxSizing: "border-box",
+    transition: "padding-left 0.3s ease-in-out, border 0.15s ease-in-out"
+  },
+  focusInputField: {
+    border: props => `2px solid ${props.color}`
   },
   inputLegend: {
     padding: 0,
@@ -29,39 +43,51 @@ const useStyles = createUseStyles({
   },
   inputLabel: {
     position: "absolute",
-    top: 10,
-    left: 8,
-    zIndex: 5,
-    transform: "scale(1)",
+    transform: "scale(1) translate(8px, 10px)",
+    transformOrigin: "top left",
     cursor: "pointer",
-    transition:
-      "transform 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out"
+    transition: "transform 0.3s ease-in-out"
   },
   focusInputLabel: {
-    transform: "scale(0.8)",
-    top: -10,
-    left: 8
+    transform: "scale(0.75) translate(16px, -10px)"
+  },
+  inputWrapper: {
+    position: "relative",
+    display: "inline-flex",
+    alignItems: "center"
   },
   select: {
     color: "currentColor",
     position: "relative",
+    display: "inline-flex",
+    alignItems: "center",
+    paddingLeft: 8,
     backgroundColor: "transparent",
-    minWidth: 125,
+    cursor: "pointer",
     minHeight: 40,
     width: "100%",
-    padding: 8,
     boxSizing: "border-box",
     border: 0,
     "&:focus": {
       outline: "none"
     }
   },
+  selectExtraLeft: {
+    paddingLeft: 32
+  },
+  selectExtraRight: {
+    paddingRight: 32
+  },
   extra: {
+    position: "absolute",
     display: "flex",
-    marginLeft: 8,
-    marginRight: 8,
-    alignItems: "center",
-    justifyContent: "center"
+    zIndex: -1
+  },
+  extraLeft: {
+    left: 8
+  },
+  extraRight: {
+    right: 8
   },
   fullWidth: {
     width: "100%"
@@ -73,81 +99,183 @@ const useStyles = createUseStyles({
 
 const SelectOutlined = props => {
   const {
-    children,
-    label,
+    options,
     value,
+    extra,
+    fullWidth,
+    label,
     id,
     name,
-    extra,
+    color,
+    onChange,
+    renderValue,
     className,
     style,
-    onChange,
-    fullWidth,
-    noMargin
+    noMargin,
+    multiple,
+    width
   } = props;
+  const classes = useStyles({ color, multiple, width });
   const [focus, setFocus] = useState(false);
+  const [target, setTarget] = useState(null);
   const [labelWidth, setLabelWidth] = useState(0);
+  const [selectValue, setSelectValue] = useState(multiple ? [] : "");
+  const [selectLabel, setSelectLabel] = useState(multiple ? [] : "");
   const labelRef = useRef(null);
-  const classes = useStyles();
-  const defaultStyles = [classes.select, classes.fullWidth, className]
-    .filter(value => Boolean(value))
-    .join(" ");
+
+  const handleClick = e => {
+    setFocus(true);
+    setTarget(e.currentTarget);
+  };
+
+  const handleClose = () => {
+    setFocus(false);
+    setTarget(null);
+  };
+
+  const handleSelect = e => {
+    let tempSelectValue = e.currentTarget.value;
+    let tempSelectLabel = e.label;
+
+    delete e.label;
+
+    if (multiple) {
+      const tempValue = [...selectValue];
+      tempValue.push(tempSelectValue);
+      setSelectValue(value);
+
+      const tempLabel = [...selectLabel];
+      tempLabel.push(e.label);
+      setSelectLabel(tempLabel);
+
+      tempSelectValue = [...tempValue];
+      tempSelectLabel = [...tempLabel];
+    } else {
+      setSelectValue(tempSelectValue);
+      setSelectLabel(tempSelectLabel);
+    }
+
+    const tempEvent = Object.assign({}, e, {
+      currentTarget: { value: tempSelectValue, label: tempSelectLabel },
+      target: { value: tempSelectValue, label: tempSelectLabel }
+    });
+    onChange(tempEvent);
+  };
+
+  useEffect(() => {
+    if (multiple) {
+      const isExists = selectValue.find(item => item === value);
+
+      if (!isExists) {
+        const index = options.findIndex(option => option.value === value);
+        setSelectValue([...selectValue].push(options[index].value));
+        setSelectLabel([...selectLabel].push(options[index].label));
+      }
+    } else {
+      if (selectValue !== value) {
+        const index = options.findIndex(option => option.value === value);
+        setSelectValue(options[index].value);
+        setSelectLabel(options[index].label);
+      }
+    }
+  }, [value, multiple, options]);
 
   useEffect(() => {
     if (labelRef.current) {
-      setLabelWidth(labelRef.current.getBoundingClientRect().width);
-
-      if (extra && extra.start) {
-        setFocus(true);
-      }
+      setLabelWidth(labelRef.current.getBoundingClientRect().width + 8);
     }
-  }, [labelRef, extra]);
+  }, [labelRef]);
 
   return (
-    <div
-      className={`${classes.inputWrapper}${
-        fullWidth ? ` ${classes.fullWidth}` : ""
-      }${noMargin ? ` ${classes.noMargin}` : ""}`}
-    >
-      <fieldset className={classes.inputField}>
-        <legend
-          className={classes.inputLegend}
-          style={{ width: label && (focus || value) ? labelWidth : "" }}
-        >
-          &#8203;
-        </legend>
-      </fieldset>
-      {extra && extra.start && (
-        <div className={classes.extra}>{extra.start}</div>
-      )}
-      <label
-        ref={labelRef}
-        htmlFor={id}
-        className={`${classes.inputLabel} ${
-          focus || value ? classes.focusInputLabel : ""
-        }`}
+    <Fragment>
+      <div
+        className={renderClassName(
+          classes.selectWrapper,
+          fullWidth && classes.fullWidth,
+          noMargin && classes.noMargin
+        )}
       >
-        {label}
-      </label>
-      <select
-        className={defaultStyles}
-        id={id}
-        name={name}
-        style={style}
-        onChange={onChange}
-        value={value}
-        onFocus={() => (extra && extra.start ? null : setFocus(true))}
-        onBlur={() => (extra && extra.start ? null : setFocus(false))}
-      >
-        {children}
-      </select>
-      {extra && extra.end && <div className={classes.extra}>{extra.end}</div>}
-    </div>
+        {label ? (
+          <label
+            ref={labelRef}
+            htmlFor={id}
+            className={renderClassName(
+              classes.inputLabel,
+              (focus || value || (extra && extra.start)) &&
+                classes.focusInputLabel
+            )}
+          >
+            {label}
+          </label>
+        ) : null}
+
+        <div className={classes.inputWrapper}>
+          <fieldset
+            className={renderClassName(
+              classes.inputField,
+              focus && classes.focusInputField
+            )}
+          >
+            <legend
+              className={classes.inputLegend}
+              style={{
+                width:
+                  label && (focus || value || (extra && extra.start))
+                    ? labelWidth
+                    : 0
+              }}
+            >
+              &#8203;
+            </legend>
+          </fieldset>
+
+          {extra && extra.start && (
+            <div className={renderClassName(classes.extra, classes.extraLeft)}>
+              {extra.start}
+            </div>
+          )}
+
+          <div
+            className={renderClassName(
+              classes.select,
+              extra && extra.start && classes.selectExtraLeft,
+              classes.selectExtraRight,
+              className
+            )}
+            style={style}
+            onClick={handleClick}
+          >
+            <Text variant="paragraph" noWrap noMargin>
+              {multiple ? renderValue(selectLabel) : selectLabel}
+            </Text>
+          </div>
+          <input type="hidden" value={value} name={name} />
+
+          <div className={renderClassName(classes.extra, classes.extraRight)}>
+            {extra && extra.end ? extra.end : <MenuDownIcon />}
+          </div>
+        </div>
+      </div>
+
+      <Menu
+        items={options}
+        target={target}
+        onClose={handleClose}
+        onSelect={handleSelect}
+        multiple={multiple}
+      />
+    </Fragment>
   );
 };
 
 SelectOutlined.propTypes = {
-  children: PropTypes.any,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
+      label: PropTypes.any
+    })
+  ).isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   extra: PropTypes.shape({
     start: PropTypes.element,
@@ -157,10 +285,14 @@ SelectOutlined.propTypes = {
   label: PropTypes.string,
   id: PropTypes.string,
   name: PropTypes.string,
+  color: PropTypes.string,
   onChange: PropTypes.func,
+  renderValue: PropTypes.func,
   className: PropTypes.string,
   style: PropTypes.object,
-  noMargin: PropTypes.bool
+  noMargin: PropTypes.bool,
+  multiple: PropTypes.bool,
+  width: PropTypes.number
 };
 
 export default SelectOutlined;

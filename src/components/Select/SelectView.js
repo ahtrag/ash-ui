@@ -2,31 +2,54 @@ import React from "react";
 import PropTypes from "prop-types";
 import SelectDefault from "./SelectDefault";
 import SelectOutlined from "./SelectOutlined";
+import NativeSelectDefault from "./NativeSelectDefault";
+import NativeSelectOutlined from "./NativeSelectOutlined";
 
 const SelectView = props => {
-  const { variant, ...selectProps } = props;
+  const { variant, native, ...selectProps } = props;
 
   switch (variant) {
     case "default":
-      return <SelectDefault {...selectProps} />;
+      return native ? (
+        <NativeSelectDefault {...selectProps} />
+      ) : (
+        <SelectDefault {...selectProps} />
+      );
     case "outlined":
-      return <SelectOutlined {...selectProps} />;
+      return native ? (
+        <NativeSelectOutlined {...selectProps} />
+      ) : (
+        <SelectOutlined {...selectProps} />
+      );
     default:
-      return <SelectDefault {...selectProps} />;
+      return native ? (
+        <NativeSelectDefault {...selectProps} />
+      ) : (
+        <SelectDefault {...selectProps} />
+      );
   }
 };
 
 SelectView.defaultProps = {
   fullWidth: false,
   noMargin: false,
-  variant: "default"
+  native: false,
+  multiple: false,
+  variant: "default",
+  renderValue: values => values.join(", ")
 };
 
 SelectView.propTypes = {
   /**
-   * Chidren of Select, option element. isRequired
+   * Options of select. isRequired
    */
-  children: PropTypes.any.isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
+      label: PropTypes.any
+    })
+  ).isRequired,
 
   /**
    * Variant of Select :
@@ -44,6 +67,13 @@ SelectView.propTypes = {
    * event target option selected
    */
   onChange: PropTypes.func,
+
+  /**
+   * Function to adjust how select render the value.
+   * Currently only work if native props set to false.
+   * @param values
+   */
+  renderValue: PropTypes.func,
 
   /**
    * fullWidth enabled, default : false
@@ -71,6 +101,11 @@ SelectView.propTypes = {
   className: PropTypes.string,
 
   /**
+   * Color of the Select border
+   */
+  color: PropTypes.string,
+
+  /**
    * Override default styles with style
    */
   style: PropTypes.object,
@@ -87,7 +122,26 @@ SelectView.propTypes = {
    * Show TextInput without margin-top and margin-bottom
    * @defaultValue false
    */
-  noMargin: PropTypes.bool
+  noMargin: PropTypes.bool,
+
+  /**
+   * Use native select
+   * @defaultValue false
+   */
+  native: PropTypes.bool,
+
+  /**
+   * Select multiple option.
+   * Currently only work if native props set to false.
+   * @defaultValue false
+   */
+  multiple: PropTypes.bool,
+
+  /**
+   * Width of the select
+   * Work only if native props set to false and multiple props set to true
+   */
+  width: PropTypes.number
 };
 
 export default SelectView;
