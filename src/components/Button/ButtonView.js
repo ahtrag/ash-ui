@@ -51,6 +51,7 @@ const ButtonView = props => {
     type,
     variant,
     component,
+    value,
     href,
     fullWidth,
     rounded,
@@ -94,6 +95,7 @@ const ButtonView = props => {
       type={type}
       className={defaultStyles}
       style={style}
+      value={value}
       onClick={e => {
         Boolean(onClick) && onClick(e);
       }}
@@ -143,6 +145,11 @@ ButtonView.propTypes = {
    * 2. a
    */
   component: PropTypes.oneOf(["button", "a"]),
+
+  /**
+   * Value of the Button
+   */
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /**
    * Override default styles with className
