@@ -110,7 +110,7 @@ MenuView.propTypes = {
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
     })
   ).isRequired,
-  target: PropTypes.object.isRequired,
+  target: PropTypes.object,
   position: PropTypes.shape({
     vertical: PropTypes.oneOf(["top", "center", "bottom"]),
     horizontal: PropTypes.oneOf(["left", "center", "right"])
