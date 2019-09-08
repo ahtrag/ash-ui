@@ -546,14 +546,20 @@ const TableView = props => {
                                 )
                               }
                               noMargin
-                            >
-                              {Object.entries(column.option).map(option => (
-                                <option key={option[0]} value={option[0]}>
-                                  {option[1]}
-                                </option>
-                              ))}
-                            </Select>
+                              options={[
+                                {
+                                  value: column.option[0],
+                                  label: column.option[0]
+                                }
+                              ]}
+                            />
                           ) : (
+                            //   {Object.entries(column.option).map(option => (
+                            //     <option key={option[0]} value={option[0]}>
+                            //       {option[1]}
+                            //     </option>
+                            //   ))}
+                            // </Select>
                             <TextInput
                               placeholder={column.label}
                               style={renderStyle(
@@ -656,14 +662,17 @@ const TableView = props => {
                           )
                         }
                         noMargin
-                      >
-                        {Object.entries(column.option).map(option => (
-                          <option key={option[0]} value={option[0]}>
-                            {option[1]}
-                          </option>
-                        ))}
-                      </Select>
+                        options={[
+                          { value: column.option[0], label: column.option[0] }
+                        ]}
+                      />
                     ) : (
+                      //   {Object.entries(column.option).map(option => (
+                      //     <option key={option[0]} value={option[0]}>
+                      //       {option[1]}
+                      //     </option>
+                      //   ))}
+                      // </Select>
                       <TextInput
                         placeholder={column.label}
                         type={column.type === "numeric" ? "number" : "text"}
@@ -727,12 +736,18 @@ const TableView = props => {
             onChange={handleChangeVisibleData}
             className={classes.footerRowsSelect}
             noMargin
-          >
-            <option value={10}>10</option>
+            options={[
+              { value: 10, label: "10" },
+              { value: 25, label: "25" },
+              { value: 50, label: "50" },
+              { value: 100, label: "100" }
+            ]}
+          />
+          {/* <option value={10}>10</option>
             <option value={25}>25</option>
             <option value={50}>50</option>
             <option value={100}>100</option>
-          </Select>
+          </Select> */}
           {/* <Tooltip label="First Page"> */}
           <IconButton onClick={() => setPage(0)} disable={page === 0}>
             <PageFirstIcon />
