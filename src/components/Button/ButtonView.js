@@ -12,7 +12,7 @@ const useStyles = createUseStyles({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    padding: "16px 32px",
+    padding: "16px",
     cursor: "pointer",
     overflow: "hidden",
     "&:focus": {
@@ -42,6 +42,10 @@ const useStyles = createUseStyles({
   },
   fullWidth: {
     width: "100%"
+  },
+  disabled: {
+    color: "rgba(0, 0, 0, 0.3)",
+    cursor: "default !important"
   }
 });
 
@@ -56,6 +60,8 @@ const ButtonView = props => {
     fullWidth,
     rounded,
     className,
+    disable,
+    disableRipple,
     style,
     onClick
   } = props;
@@ -69,7 +75,8 @@ const ButtonView = props => {
     variant === "contained" ? classes.gradAsh : classes.bgTransparent,
     fullWidth && component === "button" && classes.fullWidth,
     rounded && classes.rounded,
-    className
+    className,
+    disable ? classes.disabled : null
   );
 
   return component === "a" ? (
@@ -77,11 +84,15 @@ const ButtonView = props => {
       to={href}
       className={defaultStyles}
       style={style}
-      onClick={e => {
-        Boolean(onClick) && onClick(e);
-      }}
+      onClick={
+        !disable
+          ? e => {
+              Boolean(onClick) && onClick(e);
+            }
+          : null
+      }
     >
-      <Ripple />
+      {disable || disableRipple ? null : <Ripple />}
       {typeof children === "string" ? (
         <Text variant="button" color="currentColor" noMargin>
           {children}
@@ -96,11 +107,15 @@ const ButtonView = props => {
       className={defaultStyles}
       style={style}
       value={value}
-      onClick={e => {
-        Boolean(onClick) && onClick(e);
-      }}
+      onClick={
+        !disable
+          ? e => {
+              Boolean(onClick) && onClick(e);
+            }
+          : null
+      }
     >
-      <Ripple />
+      {disable || disableRipple ? null : <Ripple />}
       {typeof children === "string" ? (
         <Text variant="button" color="currentColor" noMargin>
           {children}
@@ -170,6 +185,16 @@ ButtonView.propTypes = {
    * If set to true, the Button will have border-radius
    */
   rounded: PropTypes.bool,
+
+  /**
+   * Disable button
+   */
+  disable: PropTypes.bool,
+
+  /**
+   * Disable ripple effect when clicked
+   */
+  disableRipple: PropTypes.bool,
 
   /**
    * Override default styles with inline style
