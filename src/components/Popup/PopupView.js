@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import Paper from "../Paper";
 import PropTypes from "prop-types";
@@ -55,6 +55,8 @@ const PopupView = props => {
     style
   } = props;
   const [element, setElement] = useState(null);
+  const [paperElement, setPaperElement] = useState(null);
+  const paperRef = useRef(null);
   const popupPosition = renderStyle(
     { vertical: "top", horizontal: "left" },
     position
@@ -86,18 +88,26 @@ const PopupView = props => {
     } else if (popupPosition.horizontal === "right") {
       styleProps.left = offset(element).left + offset(element).width;
     }
+
+    if (offset(element).top + paperElement.offsetHeight > window.innerHeight) {
+      styleProps.top =
+        offset(element).top +
+        offset(element).height -
+        paperElement.offsetHeight;
+    }
   }
 
   const classes = useStyles(styleProps);
 
   useEffect(() => {
-    if (target) {
+    if (target && paperRef.current) {
       setElement(target);
+      setPaperElement(paperRef.current);
       document.getElementsByTagName("html")[0].style.overflow = "hidden";
     }
 
     return () => (document.getElementsByTagName("html")[0].style.overflow = "");
-  }, [target]);
+  }, [target, paperRef]);
 
   return ReactDOM.createPortal(
     <CSSTransition
@@ -114,6 +124,7 @@ const PopupView = props => {
 
         <Paper
           className={renderClassName(classes.paper, className)}
+          ref={paperRef}
           style={style}
         >
           {children}
