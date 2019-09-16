@@ -7,22 +7,9 @@ function renderStyle() {
 }
 
 const offset = element => {
-  const elementOffset = {
-    top: element.offsetTop,
-    left: element.offsetLeft,
-    width: element.offsetWidth,
-    height: element.offsetHeight
-  };
+  const { top, left, height, width } = element.getBoundingClientRect();
 
-  let tempElement = element;
-
-  while (tempElement.offsetParent) {
-    tempElement = tempElement.offsetParent;
-    elementOffset.top += tempElement.offsetTop;
-    elementOffset.left += tempElement.offsetLeft;
-  }
-
-  return elementOffset;
+  return { top, left, height, width };
 };
 
 const randomString = (length = 6) => {
