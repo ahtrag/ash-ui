@@ -35,6 +35,7 @@ SelectView.defaultProps = {
   noMargin: false,
   native: false,
   multiple: false,
+  checkbox: false,
   variant: "default",
   renderValue: values => values.join(", ")
 };
@@ -61,7 +62,11 @@ SelectView.propTypes = {
   /**
    * Value of option selected
    */
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.array
+  ]),
 
   /**
    * event target option selected
@@ -106,6 +111,12 @@ SelectView.propTypes = {
   color: PropTypes.string,
 
   /**
+   * Text that will show when value is empty
+   * Currently only work if native props set to false.
+   */
+  placeholder: PropTypes.string,
+
+  /**
    * Override default styles with style
    */
   style: PropTypes.object,
@@ -138,8 +149,15 @@ SelectView.propTypes = {
   multiple: PropTypes.bool,
 
   /**
+   * Display checkbox in option menu.
+   * Currently only work if native props set to false and multiple props set to true.
+   * @defaultValue false
+   */
+  checkbox: PropTypes.bool,
+
+  /**
    * Width of the select
-   * Work only if native props set to false and multiple props set to true
+   * Work only if native props set to false
    */
   width: PropTypes.number
 };

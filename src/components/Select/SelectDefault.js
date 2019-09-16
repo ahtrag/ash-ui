@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Fragment, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import Menu from "../Menu";
+import Popup from "../Popup";
+import Button from "../Button";
+import Checkbox from "../Checkbox";
 import Text from "../Text";
 import MenuDownIcon from "mdi-react/MenuDownIcon";
 import { createUseStyles } from "react-jss";
@@ -11,7 +13,14 @@ const useStyles = createUseStyles({
   selectWrapper: {
     marginTop: 16,
     marginBottom: 4,
-    minWidth: props => (props.multiple ? "auto" : 120),
+    minWidth: props =>
+      props.multiple
+        ? "auto"
+        : props.width
+        ? props.width
+        : props.fullWidth
+        ? "100%"
+        : 120,
     width: props =>
       props.multiple ? (props.width ? props.width : 120) : "auto",
     display: "inline-flex",
@@ -54,7 +63,7 @@ const useStyles = createUseStyles({
     }
   },
   selectExtraLeft: {
-    paddingLeft: 24
+    paddingLeft: 32
   },
   selectExtraRight: {
     paddingRight: 24
@@ -70,11 +79,26 @@ const useStyles = createUseStyles({
   extraRight: {
     right: 0
   },
-  fullWidth: {
-    width: "100%"
-  },
   noMargin: {
     margin: 0
+  },
+  normal: {
+    justifyContent: "flex-start"
+  },
+  selectedMenu: {
+    "&:after": {
+      content: "''",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      height: "100%",
+      width: "100%",
+      backgroundColor: "currentColor",
+      opacity: 0.2
+    }
+  },
+  selectedText: {
+    fontWeight: 500
   }
 });
 
@@ -88,15 +112,17 @@ const SelectDefault = props => {
     id,
     name,
     color,
+    placeholder,
     onChange,
     renderValue,
     className,
     style,
     noMargin,
     multiple,
+    checkbox,
     width
   } = props;
-  const classes = useStyles({ color, multiple, width });
+  const classes = useStyles({ color, multiple, width, fullWidth });
   const [focus, setFocus] = useState(false);
   const [target, setTarget] = useState(null);
   const [selectValue, setSelectValue] = useState(multiple ? [] : "");
@@ -112,49 +138,58 @@ const SelectDefault = props => {
     setTarget(null);
   };
 
-  const handleSelect = e => {
-    let tempSelectValue = e.currentTarget.value;
-    let tempSelectLabel = e.label;
-
-    delete e.label;
+  const handleSelect = (e, option) => {
+    let tempSelectValue = option.value;
+    let tempSelectLabel = option.label;
 
     if (multiple) {
-      const tempValue = [...selectValue];
-      tempValue.push(tempSelectValue);
-      setSelectValue(value);
+      const index = selectValue.indexOf(tempSelectValue);
 
-      const tempLabel = [...selectLabel];
-      tempLabel.push(e.label);
-      setSelectLabel(tempLabel);
+      if (index === -1) {
+        const tempValue = [...selectValue];
+        tempValue.push(tempSelectValue);
+        setSelectValue(tempValue);
 
-      tempSelectValue = [...tempValue];
-      tempSelectLabel = [...tempLabel];
+        const tempLabel = [...selectLabel];
+        tempLabel.push(tempSelectLabel);
+        setSelectLabel(tempLabel);
+
+        tempSelectValue = [...tempValue];
+        tempSelectLabel = [...tempLabel];
+      } else {
+        const tempValue = [...selectValue];
+        tempValue.splice(index, 1);
+        setSelectValue(tempValue);
+
+        const tempLabel = [...selectLabel];
+        tempLabel.splice(index, 1);
+        setSelectLabel(tempLabel);
+
+        tempSelectValue = [...tempValue];
+        tempSelectLabel = [...tempLabel];
+      }
     } else {
       setSelectValue(tempSelectValue);
       setSelectLabel(tempSelectLabel);
+      handleClose();
     }
 
     const tempEvent = Object.assign({}, e, {
       currentTarget: { value: tempSelectValue, label: tempSelectLabel },
       target: { value: tempSelectValue, label: tempSelectLabel }
     });
+
     onChange(tempEvent);
   };
 
   useEffect(() => {
-    if (multiple) {
-      const isExists = selectValue.find(item => item === value);
-
-      if (!isExists) {
-        const index = options.findIndex(option => option.value === value);
-        setSelectValue([...selectValue].push(options[index].value));
-        setSelectLabel([...selectLabel].push(options[index].label));
-      }
-    } else {
-      if (selectValue !== value) {
-        const index = options.findIndex(option => option.value === value);
-        setSelectValue(options[index].value);
-        setSelectLabel(options[index].label);
+    if (value) {
+      if (!multiple) {
+        if (selectValue !== value) {
+          const index = options.findIndex(option => option.value === value);
+          setSelectValue(options[index].value);
+          setSelectLabel(options[index].label);
+        }
       }
     }
   }, [value, multiple, options]);
@@ -164,7 +199,6 @@ const SelectDefault = props => {
       <div
         className={renderClassName(
           classes.selectWrapper,
-          fullWidth && classes.fullWidth,
           noMargin && classes.noMargin
         )}
       >
@@ -203,8 +237,14 @@ const SelectDefault = props => {
             style={style}
             onClick={handleClick}
           >
-            <Text variant="paragraph" noWrap noMargin>
-              {multiple ? renderValue(selectLabel) : selectLabel}
+            <Text variant="caption" noWrap noMargin>
+              {multiple
+                ? selectLabel.length > 0
+                  ? renderValue(selectValue)
+                  : placeholder
+                : selectLabel
+                ? selectLabel
+                : placeholder}
             </Text>
           </div>
           <input type="hidden" value={value} name={name} />
@@ -214,13 +254,42 @@ const SelectDefault = props => {
           </div>
         </div>
       </div>
-      <Menu
-        items={options}
-        target={target}
-        onClose={handleClose}
-        onSelect={handleSelect}
-        multiple={multiple}
-      />
+
+      <Popup target={target} onClose={handleClose}>
+        {options.map((option, index) => (
+          <Button
+            key={`menu-${option.label}-${index}`}
+            onClick={e => handleSelect(e, option)}
+            className={renderClassName(
+              classes.normal,
+              multiple
+                ? selectValue.indexOf(option.value) !== -1 &&
+                    classes.selectedMenu
+                : selectValue === option.value && classes.selectedMenu
+            )}
+            rounded={false}
+            fullWidth
+          >
+            {multiple && checkbox ? (
+              <Checkbox
+                checked={selectValue.indexOf(option.value) !== -1}
+                component="span"
+              />
+            ) : null}
+            <Text
+              className={renderClassName(
+                multiple
+                  ? selectValue.indexOf(option.value) !== -1 &&
+                      classes.selectedText
+                  : selectValue === option.value && classes.selectedText
+              )}
+              noMargin
+            >
+              {option.label}
+            </Text>
+          </Button>
+        ))}
+      </Popup>
     </Fragment>
   );
 };
@@ -233,7 +302,11 @@ SelectDefault.propTypes = {
       label: PropTypes.any
     })
   ).isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.array
+  ]),
   extra: PropTypes.shape({
     start: PropTypes.element,
     end: PropTypes.element
@@ -243,12 +316,14 @@ SelectDefault.propTypes = {
   id: PropTypes.string,
   name: PropTypes.string,
   color: PropTypes.string,
+  placeholder: PropTypes.string,
   onChange: PropTypes.func,
   renderValue: PropTypes.func,
   className: PropTypes.string,
   style: PropTypes.object,
   noMargin: PropTypes.bool,
   multiple: PropTypes.bool,
+  checkbox: PropTypes.bool,
   width: PropTypes.number
 };
 
