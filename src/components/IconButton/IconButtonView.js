@@ -1,22 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { createUseStyles } from "react-jss";
 import Ripple from "../Ripple";
+import { createUseStyles } from "react-jss";
+import { Link } from "react-router-dom";
 
 const useStyles = createUseStyles({
   iconButton: {
-    display: "flex",
+    display: "inline-flex",
+    flex: "0 0 auto",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    height: 24,
-    width: 24,
     padding: 12,
-    boxSizing: "content-box",
+    color: "currentColor",
     borderRadius: "50%",
     cursor: "pointer",
     overflow: "hidden",
     backgroundColor: "transparent",
+    "-webkit-tap-highlight-color": "transparent",
     "&:focus": {
       outline: "none"
     }
@@ -28,7 +29,16 @@ const useStyles = createUseStyles({
 });
 
 const IconButtonView = props => {
-  const { children, className, style, onClick, disable, disableRipple } = props;
+  const {
+    children,
+    component,
+    className,
+    href,
+    style,
+    onClick,
+    disable,
+    disableRipple
+  } = props;
   const classes = useStyles();
   const defaultStyles = [
     classes.iconButton,
@@ -38,7 +48,23 @@ const IconButtonView = props => {
     .filter(value => Boolean(value))
     .join(" ");
 
-  return (
+  return component === "a" ? (
+    <Link
+      to={href}
+      className={defaultStyles}
+      style={style}
+      onClick={
+        !disable
+          ? e => {
+              Boolean(onClick) && onClick(e);
+            }
+          : null
+      }
+    >
+      {disable || disableRipple ? null : <Ripple />}
+      {children}
+    </Link>
+  ) : (
     <button
       className={defaultStyles}
       style={style}
@@ -69,9 +95,21 @@ IconButtonView.propTypes = {
   children: PropTypes.element.isRequired,
 
   /**
+   * Component used by IconButton:
+   * 1. button
+   * 2. a
+   */
+  component: PropTypes.oneOf(["button", "a"]),
+
+  /**
    * Override default styles with className
    */
   className: PropTypes.string,
+
+  /**
+   * Hyperlink, only work when component props set to a
+   */
+  href: PropTypes.string,
 
   /**
    * Override default styles with inline style
