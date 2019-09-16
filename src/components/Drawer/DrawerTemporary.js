@@ -1,32 +1,13 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
+import Divider from "../Divider";
+import Button from "../Button";
+import Text from "../Text";
 import { createUseStyles } from "react-jss";
-import { Link } from "react-router-dom";
-import { breakpoints } from "../../utils/styles";
 import { renderClassName, renderStyle } from "../../utils/constants";
 import { CSSTransition } from "react-transition-group";
-import Divider from "../Divider";
 
 const useStyles = createUseStyles({
-  "@global": {
-    "*": {
-      margin: 0,
-      padding: 0,
-      border: 0,
-      textDecoration: "none",
-      fontFamily: "'Roboto', sans-serif"
-    }
-  },
-  [breakpoints.down("xs")]: {
-    "@global": {
-      html: {
-        fontSize: 12
-      }
-    }
-  },
-  root: {
-    flex: 1
-  },
   drawerWrapper: {
     position: "absolute",
     top: 0,
@@ -65,22 +46,19 @@ const useStyles = createUseStyles({
   drawer: {
     height: "100%",
     width: props => props.width,
-    transform: "translateX(-175px)",
+    transform: props => `translateX(${-props.width}px)`,
     transition: "transform 0.3s ease-in-out",
     backgroundColor: "#FFFFFF",
     position: "relative",
     boxShadow: "2px 0px 7px -2px rgba(0, 0, 0, 0.4)",
     overflowY: "auto"
   },
-  drawerNav: {
-    display: "flex",
-    alignItems: "center",
-    padding: 12
-  },
   drawerNavLink: {
-    marginLeft: 8,
-    color: "#000000",
-    fontSize: "1.1rem"
+    padding: 12,
+    justifyContent: "flex-start"
+  },
+  drawerNavLinkText: {
+    paddingLeft: 8
   },
   drawerDivider: {
     backgroundColor: "rgba(0, 0, 0, 0.22)"
@@ -91,63 +69,63 @@ const DrawerTemporary = props => {
   const { menuList, onClose, show, className, style, ...otherProps } = props;
   const classes = useStyles(otherProps);
   return (
-    <div>
-      <CSSTransition
-        in={show}
-        timeout={300}
-        unmountOnExit
-        classNames={{
-          enterDone: classes.drawerEnterDone,
-          enterActive: classes.drawerEnterActive
-        }}
-      >
-        <div className={classes.drawerWrapper}>
-          <div
-            className={renderClassName(classes.overlay)}
-            onClick={e => Boolean(onClose) && onClose(e)}
-          />
+    <CSSTransition
+      in={show}
+      timeout={300}
+      unmountOnExit
+      classNames={{
+        enterDone: classes.drawerEnterDone,
+        enterActive: classes.drawerEnterActive
+      }}
+    >
+      <div className={classes.drawerWrapper}>
+        <div className={renderClassName(classes.overlay)} onClick={onClose} />
 
-          <div
-            className={renderClassName(
-              classes.drawer,
-              className && className.root
-            )}
-            style={renderStyle(style && style.root)}
-          >
-            {menuList ? (
-              <ul>
-                {menuList.map(nav => (
-                  <Fragment key={nav.label}>
-                    <li
+        <div
+          className={renderClassName(
+            classes.drawer,
+            className && className.root
+          )}
+          style={renderStyle(style && style.root)}
+        >
+          {menuList ? (
+            <ul>
+              {menuList.map(nav => (
+                <Fragment key={nav.label}>
+                  <li
+                    className={renderClassName(className && className.listItem)}
+                    style={renderStyle(style && style.listItem)}
+                  >
+                    <Button
+                      component={nav.to ? "a" : "button"}
+                      href={nav.to}
                       className={renderClassName(
-                        classes.drawerNav,
-                        className && className.listItem
+                        classes.drawerNavLink,
+                        className && className.link
                       )}
-                      style={renderStyle(style && style.listItem)}
+                      style={renderStyle(style && style.link)}
+                      rounded={false}
                     >
                       {nav.icon}
-                      <Link
-                        to={nav.to}
-                        className={renderClassName(
-                          classes.drawerNavLink,
-                          className && className.link
-                        )}
-                        style={renderStyle(style && style.link)}
+                      <Text
+                        variant="paragraph"
+                        className={classes.drawerNavLinkText}
+                        noMargin
                       >
                         {nav.label}
-                      </Link>
-                    </li>
-                    {nav.divider ? (
-                      <Divider className={classes.drawerDivider} />
-                    ) : null}
-                  </Fragment>
-                ))}
-              </ul>
-            ) : null}
-          </div>
+                      </Text>
+                    </Button>
+                  </li>
+                  {nav.divider ? (
+                    <Divider className={classes.drawerDivider} />
+                  ) : null}
+                </Fragment>
+              ))}
+            </ul>
+          ) : null}
         </div>
-      </CSSTransition>
-    </div>
+      </div>
+    </CSSTransition>
   );
 };
 
