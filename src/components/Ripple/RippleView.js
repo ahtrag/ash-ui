@@ -62,8 +62,9 @@ const RippleView = props => {
     const { height, width, top, left } = offset(
       rippleRootRef.current.offsetParent
     );
-    const posX = e.pageX - left;
-    const posY = e.pageY - top;
+
+    const posX = e.clientX - left;
+    const posY = e.clientY - top;
     const size = width <= height ? height : width;
 
     const ripple = (
