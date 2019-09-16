@@ -91,9 +91,9 @@ const useStyles = createUseStyles({
   },
   caption: {
     fontWeight: 400,
-    fontSize: "0.75rem",
+    fontSize: "0.8rem",
     lineHeight: 1.5,
-    letterSpacing: 0.15
+    letterSpacing: 0.1
   }
 });
 
@@ -185,7 +185,7 @@ const TextView = props => {
 
 TextView.defaultProps = {
   variant: "body",
-  color: "black",
+  color: "currentColor",
   align: "left",
   noMargin: false,
   noWrap: false
