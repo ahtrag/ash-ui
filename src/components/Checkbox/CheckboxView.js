@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import Ripple from "../Ripple";
 import Text from "../Text";
@@ -10,8 +10,7 @@ import { renderClassName } from "../../utils/constants";
 const useStyles = createUseStyles({
   root: {
     display: "flex",
-    alignItems: "center",
-    marginRight: 16
+    alignItems: "center"
   },
   iconButton: {
     position: "relative",
@@ -34,6 +33,7 @@ const CheckboxView = props => {
     name,
     id,
     className,
+    component,
     style,
     disable,
     disableRipple,
@@ -43,8 +43,8 @@ const CheckboxView = props => {
   } = props;
   const classes = useStyles({ color, disable });
 
-  return (
-    <label className={renderClassName(classes.root, className)} style={style}>
+  const renderChild = () => (
+    <Fragment>
       <span className={classes.iconButton}>
         {checked ? checkedIcon : uncheckedIcon}
         {!disable && !disableRipple ? <Ripple /> : null}
@@ -61,12 +61,23 @@ const CheckboxView = props => {
         style={{ display: "none" }}
         disabled={disable}
       />
+    </Fragment>
+  );
+
+  return component === "span" ? (
+    <span className={renderClassName(classes.root, className)} style={style}>
+      {renderChild()}
+    </span>
+  ) : (
+    <label className={renderClassName(classes.root, className)} style={style}>
+      {renderChild()}
     </label>
   );
 };
 
 CheckboxView.defaultProps = {
   color: "black",
+  component: "label",
   disable: false,
   disableRipple: false,
   checkedIcon: <CheckBoxIcon />,
@@ -82,6 +93,7 @@ CheckboxView.propTypes = {
   id: PropTypes.string,
   labelColor: PropTypes.string,
   className: PropTypes.string,
+  component: PropTypes.oneOf(["label", "span"]),
   style: PropTypes.object,
   disable: PropTypes.bool,
   disableRipple: PropTypes.bool,
