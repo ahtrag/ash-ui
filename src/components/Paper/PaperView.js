@@ -1,7 +1,8 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import { createUseStyles } from "react-jss";
+import { renderClassName } from "../../utils/constants";
 
 const useStyles = createUseStyles({
   root: {
@@ -25,23 +26,24 @@ const useStyles = createUseStyles({
   }
 });
 
-const PaperView = props => {
+const PaperView = forwardRef((props, ref) => {
   const { children, className, style, elevation } = props;
   const classes = useStyles();
-  const defaultStyles = [
-    classes.root,
-    classes[`shadow${_.startCase(_.lowerCase(elevation))}`],
-    className
-  ]
-    .filter(value => Boolean(value))
-    .join(" ");
 
   return (
-    <div className={defaultStyles} style={style}>
+    <div
+      className={renderClassName(
+        classes.root,
+        classes[`shadow${_.startCase(_.lowerCase(elevation))}`],
+        className
+      )}
+      ref={ref}
+      style={style}
+    >
       {children}
     </div>
   );
-};
+});
 
 PaperView.defaultProps = {
   elevation: "mid",
