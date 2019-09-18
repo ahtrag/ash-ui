@@ -1,10 +1,73 @@
 import React from "react";
 import PropTypes from "prop-types";
-import _ from "lodash";
-import { globalStyles } from "../../utils/styles";
+import { breakpoints } from "../../utils/theme";
 import { createUseStyles } from "react-jss";
+import { renderClassName } from "../../utils/constants";
 
-const useGlobalStyles = createUseStyles(globalStyles);
+const useStyles = createUseStyles({
+  container: {
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: props => (props.direction ? props.direction : ""),
+    padding: props => props.padding * 4,
+    justifyContent: props => (props.justifyContent ? props.justifyContent : ""),
+    alignItems: props => (props.alignItems ? props.alignItems : "")
+  },
+  item: {
+    boxSizing: "border-box",
+    padding: props => props.padding * 4
+  },
+  xs: props =>
+    props.xs
+      ? {
+          [breakpoints.up("xs")]: {
+            flexGrow: 0,
+            flexBasis: `${(props.xs / 12) * 100}%`,
+            maxWidth: `${(props.xs / 12) * 100}%`
+          }
+        }
+      : null,
+  sm: props =>
+    props.sm
+      ? {
+          [breakpoints.up("sm")]: {
+            flexGrow: 0,
+            flexBasis: `${(props.sm / 12) * 100}%`,
+            maxWidth: `${(props.sm / 12) * 100}%`
+          }
+        }
+      : null,
+  md: props =>
+    props.md
+      ? {
+          [breakpoints.up("md")]: {
+            flexGrow: 0,
+            flexBasis: `${(props.md / 12) * 100}%`,
+            maxWidth: `${(props.md / 12) * 100}%`
+          }
+        }
+      : null,
+  lg: props =>
+    props.lg
+      ? {
+          [breakpoints.up("lg")]: {
+            flexGrow: 0,
+            flexBasis: `${(props.lg / 12) * 100}%`,
+            maxWidth: `${(props.lg / 12) * 100}%`
+          }
+        }
+      : null,
+  xl: props =>
+    props.xl
+      ? {
+          [breakpoints.up("xl")]: {
+            flexGrow: 0,
+            flexBasis: `${(props.xl / 12) * 100}%`,
+            maxWidth: `${(props.xl / 12) * 100}%`
+          }
+        }
+      : null
+});
 
 const GridView = props => {
   const {
@@ -12,60 +75,59 @@ const GridView = props => {
     type,
     justifyContent,
     alignItems,
+    direction,
     xs,
     sm,
     md,
     lg,
     xl,
+    padding,
     className,
     style
   } = props;
-  const styles = useGlobalStyles();
+  const classes = useStyles({
+    justifyContent,
+    alignItems,
+    direction,
+    xs,
+    sm,
+    md,
+    lg,
+    xl,
+    padding
+  });
 
   if (type === "container") {
-    const defaultStyles = [
-      styles.disFlex,
-      styles.fwWrap,
-      styles.smPadAll,
-      styles[`jc${_.startCase(_.lowerCase(justifyContent))}`],
-      styles[`ai${_.startCase(_.lowerCase(alignItems))}`],
-      className
-    ]
-      .filter(value => Boolean(value))
-      .join(" ");
-
     return (
-      <div className={defaultStyles} style={style}>
+      <div
+        className={renderClassName(classes.container, className)}
+        style={style}
+      >
         {children}
       </div>
     );
   }
 
-  const defaultStyles = [
-    styles.smPadAll,
-    styles.disInlineFlex,
-    xs > 0 && xs < 13 ? styles[`xs${xs}`] : "",
-    sm > 0 && sm < 13 ? styles[`sm${sm}`] : "",
-    md > 0 && md < 13 ? styles[`md${md}`] : "",
-    lg > 0 && lg < 13 ? styles[`lg${lg}`] : "",
-    xl > 0 && xl < 13 ? styles[`xl${xl}`] : "",
-    className
-  ]
-    .filter(value => Boolean(value))
-    .join(" ");
-
   return (
-    <div className={defaultStyles} style={style}>
+    <div
+      className={renderClassName(
+        classes.item,
+        xs > 0 && xs < 13 && classes.xs,
+        sm > 0 && sm < 13 && classes.sm,
+        md > 0 && md < 13 && classes.md,
+        lg > 0 && lg < 13 && classes.lg,
+        xl > 0 && xl < 13 && classes.xl,
+        className
+      )}
+      style={style}
+    >
       {children}
     </div>
   );
 };
 
 GridView.defaultProps = {
-  type: "container",
-  justifyContent: "normal",
-  alignItems: "normal",
-  className: ""
+  padding: 4
 };
 
 GridView.propTypes = {
@@ -84,40 +146,54 @@ GridView.propTypes = {
 
   /**
    * Type of Justify-Content in container:
-   * 1. normal => normal
-   * 2. start => flex-start
-   * 3. center => center
-   * 4. end => flex-end
-   * 5. between => space-between
-   * 6. around => space-around
-   * 7. evenly => space-evenly
+   * 1. normal
+   * 2. flex-start
+   * 3. center
+   * 4. flex-end
+   * 5. space-between
+   * 6. space-around
+   * 7. space-evenly
    */
   justifyContent: PropTypes.oneOf([
     "normal",
-    "start",
+    "flex-start",
     "center",
-    "end",
-    "between",
-    "around",
-    "evenly"
+    "flex-end",
+    "space-between",
+    "space-around",
+    "space-evenly"
   ]),
 
   /**
    * Type of Align-Items in container:
-   * 1. normal => normal
-   * 2. start => flex-start
-   * 3. center => center
-   * 4. end => flex-end
-   * 5. baseline => baseline
-   * 6. stretch => stretch
+   * 1. normal
+   * 2. flex-start
+   * 3. center
+   * 4. flex-end
+   * 5. baseline
+   * 6. stretch
    */
   alignItems: PropTypes.oneOf([
     "normal",
-    "start",
+    "flex-start",
     "center",
-    "end",
+    "flex-end",
     "baseline",
     "stretch"
+  ]),
+
+  /**
+   * Direction of the grid:
+   * 1. row (default)
+   * 2. column
+   * 3. row-reverse
+   * 4. column-reverse
+   */
+  direction: PropTypes.oneOf([
+    "row",
+    "column",
+    "row-reverse",
+    "column-reverse"
   ]),
 
   /**
@@ -149,6 +225,12 @@ GridView.propTypes = {
    * Value in range of 1 to 12
    */
   xl: PropTypes.number,
+
+  /**
+   * Grid padding multiply by 4.
+   * @defaultValue 4
+   */
+  padding: PropTypes.number,
 
   /**
    * Override default styles with className
