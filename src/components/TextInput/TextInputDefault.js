@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import IconButton from "../IconButton";
+import EyeIcon from "mdi-react/EyeIcon";
+import EyeOffIcon from "mdi-react/EyeOffIcon";
 import { createUseStyles } from "react-jss";
 import { renderClassName } from "../../utils/constants";
 
 const useStyles = createUseStyles({
   textInputWrapper: {
     marginTop: 16,
-    marginBottom: 4,
+    marginBottom: 8,
     display: "inline-flex",
     flexDirection: "column",
     position: "relative"
   },
   inputLabel: {
     position: "absolute",
-    transform: "scale(1) translate(8px, 10px)",
+    transform: "scale(1) translate(8px, 14px)",
     transformOrigin: "top left",
     cursor: "pointer",
     transition: "transform 0.3s ease-in-out"
@@ -34,7 +37,7 @@ const useStyles = createUseStyles({
     color: "currentColor",
     position: "relative",
     backgroundColor: "transparent",
-    minHeight: 40,
+    minHeight: 48,
     width: "100%",
     boxSizing: "border-box",
     border: 0,
@@ -79,7 +82,12 @@ const TextInputDefault = props => {
     noMargin
   } = props;
   const [focus, setFocus] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const classes = useStyles({ color });
+
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div
@@ -114,7 +122,7 @@ const TextInputDefault = props => {
           </div>
         )}
         <input
-          type={type}
+          type={type === "password" && showPassword ? "text" : type}
           placeholder={!label ? placeholder : focus ? placeholder : ""}
           value={value}
           id={id}
@@ -128,11 +136,13 @@ const TextInputDefault = props => {
           }}
           onBlur={() => setFocus(false)}
         />
-        {extra && extra.end && (
-          <div className={renderClassName(classes.extra, classes.extraRight)}>
-            {extra.end}
-          </div>
-        )}
+        {extra && extra.end ? (
+          <div className={classes.extra}>{extra.end}</div>
+        ) : type === "password" ? (
+          <IconButton onClick={handleShowPassword}>
+            {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+          </IconButton>
+        ) : null}
       </div>
     </div>
   );
