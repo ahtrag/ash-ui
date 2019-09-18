@@ -66,6 +66,7 @@ const IconButtonView = props => {
     </Link>
   ) : (
     <button
+      type="button"
       className={defaultStyles}
       style={style}
       onClick={
