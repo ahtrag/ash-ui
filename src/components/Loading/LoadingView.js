@@ -17,16 +17,48 @@ const LoadingView = props => {
 };
 
 LoadingView.defaultProps = {
+  show: false,
   random: true,
-  color: "black"
+  overlay: false,
+  color: "currentColor",
+  size: 80
 };
 
 LoadingView.propTypes = {
+  /**
+   * Show the loading.
+   * @defaultValue false.
+   */
+  show: PropTypes.bool,
+
   /**
    * Random the loading color.
    * Default to true.
    */
   random: PropTypes.bool,
+
+  /**
+   * Size of the loading
+   */
+  size: PropTypes.number,
+
+  /**
+   * Display loading with overlay
+   * @defaultValue false
+   */
+  overlay: PropTypes.bool,
+
+  /**
+   * Variant of the Loading
+   * 1. default
+   * 2. wave
+   */
+  variant: PropTypes.oneOf(["default", "wave"]),
+
+  /**
+   * Text below the Loading
+   */
+  label: PropTypes.string,
 
   /**
    * Color of the loading
