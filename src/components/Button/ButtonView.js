@@ -12,7 +12,7 @@ const useStyles = createUseStyles({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    padding: "16px",
+    padding: "12px 24px",
     cursor: "pointer",
     overflow: "hidden",
     "&:focus": {
@@ -20,7 +20,7 @@ const useStyles = createUseStyles({
     }
   },
   outline: {
-    border: "1px solid #9a7ba8"
+    border: "1px solid currentColor"
   },
   clWhite: {
     color: "white"
