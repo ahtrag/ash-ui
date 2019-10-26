@@ -36,7 +36,7 @@ const useStyles = createUseStyles({
   },
   inputLabel: {
     position: "absolute",
-    transform: "scale(1) translate(8px, 10px)",
+    transform: "scale(1) translate(8px, 14px)",
     transformOrigin: "top left",
     cursor: "pointer",
     transition: "transform 0.3s ease-in-out"
@@ -52,7 +52,7 @@ const useStyles = createUseStyles({
     color: "currentColor",
     position: "relative",
     backgroundColor: "transparent",
-    minHeight: 40,
+    minHeight: 48,
     width: "100%",
     padding: 8,
     boxSizing: "border-box",

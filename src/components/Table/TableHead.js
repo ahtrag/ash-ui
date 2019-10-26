@@ -29,7 +29,8 @@ const useStyles = createUseStyles({
     borderBottom: "1px solid #DDDDDD",
     textAlign: "left",
     fontSize: 14,
-    color: "gray"
+    color: "gray",
+    whiteSpace: "nowrap"
   },
   tableActionCell: {
     padding: 4,
@@ -87,7 +88,7 @@ const TableHead = props => {
       defaultSort &&
       (defaultSort.type === "ascending" || defaultSort.type === "descending") &&
       defaultSort.column &&
-      renderCount < 2
+      renderCount < 3
     ) {
       setSortType(defaultSort.type);
       setSortColumn(defaultSort.column);
@@ -123,9 +124,9 @@ const TableHead = props => {
             </div>
           </th>
         ) : null}
-        {columns.map(column => (
+        {columns.map((column, index) => (
           <th
-            key={column.key}
+            key={`${column.key}-${index}`}
             className={renderClassName(
               classes.tableCell,
               column.type === "numeric" && classes.numeric,
@@ -186,9 +187,15 @@ TableHead.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       key: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(["numeric", "select", "date"]),
+      type: PropTypes.oneOf(["numeric", "select", "date", "file"]),
       option: PropTypes.object,
       format: PropTypes.string,
+      children: PropTypes.arrayOf(PropTypes.string),
+      render: PropTypes.func,
+      currency: PropTypes.shape({
+        countryId: PropTypes.string.isRequired,
+        currencyCode: PropTypes.string.isRequired
+      }),
       styleOptions: PropTypes.shape({
         head: PropTypes.object,
         cell: PropTypes.object

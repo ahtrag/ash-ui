@@ -13,7 +13,7 @@ const useStyles = createUseStyles({
     marginBottom: "0.4em"
   },
   align: {
-    textAlign: props => props.align
+    textAlign: props => (props.align ? props.align : "")
   },
   display: {
     display: props => (props.display ? props.display : "")
@@ -59,7 +59,7 @@ const useStyles = createUseStyles({
     letterSpacing: 0.5
   },
   title: {
-    fontWeight: 400,
+    fontWeight: 500,
     fontSize: "1rem",
     lineHeight: 1.75,
     letterSpacing: 0.2
@@ -186,7 +186,6 @@ const TextView = props => {
 TextView.defaultProps = {
   variant: "body",
   color: "currentColor",
-  align: "left",
   noMargin: false,
   noWrap: false
 };

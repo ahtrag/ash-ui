@@ -12,7 +12,8 @@ const useStyles = createUseStyles({
     top: 0,
     left: 0,
     width: "100%",
-    height: "100%"
+    height: "100%",
+    zIndex: 100
   },
   popupEnter: {
     "& $paper": {
@@ -31,13 +32,9 @@ const useStyles = createUseStyles({
     position: "absolute",
     overflowX: "hidden",
     overflowY: "auto",
-    top: props => props.top,
-    left: props => props.left,
     zIndex: 100,
     maxWidth: "calc(100% - 32px)",
-    minWidth: props => props.width,
     maxHeight: "calc(100% - 32px)",
-    transformOrigin: props => props.transformOrigin,
     transform: "scale(0)",
     opacity: 0,
     transition: "transform 0.2s ease-in-out, opacity 0.2s ease-in-out"
@@ -58,7 +55,7 @@ const PopupView = props => {
   const [paperElement, setPaperElement] = useState(null);
   const paperRef = useRef(null);
   const popupPosition = renderStyle(
-    { vertical: "top", horizontal: "left" },
+    { vertical: "center", horizontal: "center" },
     position
   );
   const transformPosition = renderStyle(
@@ -68,23 +65,23 @@ const PopupView = props => {
   const styleProps = {
     top: 0,
     left: 0,
-    width: 0,
+    minWidth: 0,
     transformOrigin: `${transformPosition.horizontal} ${transformPosition.vertical}`
   };
 
   if (element) {
-    styleProps.top = offset(element).top;
-    styleProps.left = offset(element).left;
-    styleProps.width = offset(element).width;
+    styleProps.top = offset(element).top - paperElement.offsetHeight;
+    styleProps.left = offset(element).left - paperElement.offsetWidth;
+    styleProps.minWidth = offset(element).width;
 
     if (popupPosition.vertical === "center") {
-      styleProps.top = offset(element).top + offset(element).height / 2;
+      styleProps.top = offset(element).top;
     } else if (popupPosition.vertical === "bottom") {
       styleProps.top = offset(element).top + offset(element).height;
     }
 
     if (popupPosition.horizontal === "center") {
-      styleProps.left = offset(element).left + offset(element).width / 2;
+      styleProps.left = offset(element).left;
     } else if (popupPosition.horizontal === "right") {
       styleProps.left = offset(element).left + offset(element).width;
     }
@@ -95,9 +92,17 @@ const PopupView = props => {
         offset(element).height -
         paperElement.offsetHeight;
     }
+
+    if (styleProps.top < 0) {
+      styleProps.top = 32;
+    }
+
+    if (paperElement.offsetHeight + 32 === window.innerHeight) {
+      styleProps.top = 16;
+    }
   }
 
-  const classes = useStyles(styleProps);
+  const classes = useStyles();
 
   useEffect(() => {
     if (target && paperRef.current) {
@@ -125,7 +130,7 @@ const PopupView = props => {
         <Paper
           className={renderClassName(classes.paper, className)}
           ref={paperRef}
-          style={style}
+          style={renderStyle(styleProps, style)}
         >
           {children}
         </Paper>

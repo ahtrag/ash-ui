@@ -1,201 +1,149 @@
-import React, { useState } from "react";
-import { globalStyles } from "../utils/styles";
+import React, { useState, useEffect } from "react";
+import Table from "../components/Table";
 import { createUseStyles } from "react-jss";
-import AppDrawer from "../components/AppDrawer";
-import AccountIcon from "mdi-react/AccountIcon";
-import Avatar from "../components/Avatar";
-import Button from "../components/Button";
-import Divider from "../components/Divider";
-import Drawer from "../components/Drawer";
-import IconButton from "../components/IconButton";
-import Tooltip from "../components/Tooltip";
-import Grid from "../components/Grid";
-import Modal from "../components/Modal";
-import Switch from "../components/Switch";
-import Select from "../components/Select";
-import TextInput from "../components/TextInput";
+import { globalStyles } from "../utils/styles";
 
 const useGlobalStyles = createUseStyles(globalStyles);
 
-const menus = [
-  {
-    label: "Menu 1",
-    icon: <AccountIcon />,
-    to: "/",
-    divider: false
-  }
-];
-
-const useStyles = createUseStyles({
-  menuStyle: {
-    color: "black"
-  },
-  classNameTest: {
-    background: "black"
-  }
-});
-
 const Test = props => {
-  const styles = useGlobalStyles();
-  const classes = useStyles();
-  const [state, setState] = useState({
-    buttonTest: true,
-    isOpen: false,
-    show: false,
-    active: "Val1",
-    optionValue: Number(),
-    inputValue: ""
-  });
-  console.log(state);
+  useGlobalStyles();
+  const [customers, setCustomers] = useState(null);
+  const [occupations, setOccupations] = useState(null);
+
+  const columns = [
+    {
+      label: "Name",
+      key: "name"
+    },
+    {
+      label: "Email",
+      key: "email"
+    },
+    {
+      label: "Phone",
+      key: "mobilePhone"
+    },
+    // {
+    //   label: "Occupation",
+    //   key: "occupations",
+    //   type: "select",
+    //   option: Object.assign(
+    //     {},
+    //     occupations &&
+    //       occupations
+    //         .map(occupation => ({
+    //           [occupation._id]: occupation.occupationName
+    //         }))
+    //         .reduce(
+    //           (result, value) =>
+    //             console.log({
+    //               key: Object.keys(value)[0],
+    //               value: Object.values(value)[0]
+    //             }),
+    //           {}
+    //         )
+    //   )
+    // },
+    {
+      label: "Gender",
+      key: "gender",
+      type: "select",
+      option: {
+        male: "Male",
+        female: "Female"
+      }
+    },
+    {
+      label: "Birthday",
+      key: "birthday",
+      type: "date",
+      format: "dd MMM yyyy"
+    },
+    {
+      label: "Active?",
+      key: "isActive",
+      type: "select",
+      option: {
+        true: "Active",
+        false: "Inactive"
+      }
+    },
+    {
+      label: "Married?",
+      key: "isMarried",
+      type: "select",
+      option: {
+        true: "Married",
+        false: "Single"
+      }
+    },
+    {
+      label: "Verified?",
+      key: "isVerified",
+      type: "select",
+      option: {
+        true: "Verified",
+        false: "Unverified"
+      }
+    }
+  ];
+
+  useEffect(() => {
+    fetch(
+      "https://finoo-master-dev.herokuapp.com/api/customers/?isActive=true",
+      {
+        headers: {
+          "x-auth-token":
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDRiZTM0NzFjOWQ0NDAwMDA4ZTZmNDYiLCJlbWFpbCI6Im1hc3RlckBob29waXBlci5jb20iLCJ1c2VydHlwZSI6ImFkbWluIiwiaWF0IjoxNTY4NjU4OTM3LCJleHAiOjE1Njg2Njk3Mzd9.Lo-VaQk3_RPQ5ooeHvOGQ5fJHWOFBglTDrvmJB0CELw"
+        }
+      }
+    )
+      .then(res => res.json())
+      .then(json => setCustomers(json.data));
+  }, []);
+
+  useEffect(() => {
+    fetch(
+      "https://finoo-master-dev.herokuapp.com/api/occupations?isActive=true",
+      {
+        headers: {
+          "x-auth-token":
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDRiZTM0NzFjOWQ0NDAwMDA4ZTZmNDYiLCJlbWFpbCI6Im1hc3RlckBob29waXBlci5jb20iLCJ1c2VydHlwZSI6ImFkbWluIiwiaWF0IjoxNTY4NjU4OTM3LCJleHAiOjE1Njg2Njk3Mzd9.Lo-VaQk3_RPQ5ooeHvOGQ5fJHWOFBglTDrvmJB0CELw"
+        }
+      }
+    )
+      .then(res => res.json())
+      .then(json => setOccupations(json.data));
+  }, []);
+
+  console.log(
+    occupations &&
+      occupations.reduce(
+        (result, value) => ({ ...result, [value._id]: value.occupationName }),
+        {}
+      )
+  );
+
+  console.log(customers);
+
   return (
-    <div className={styles.posRelative}>
-      <AppDrawer
-        title="Title"
-        profile="Profile"
-        menuList={{ data: menus, className: classes.menuStyle }}
-        showMenu
-        className={classes.classNameTest}
-        style={{ background: "black" }}
-      >
-        {state.isOpen ? (
-          <Drawer
-            isOpen={state.isOpen}
-            onClose={() => setState({ ...state, isOpen: !state.isOpen })}
-            // menuList={menus}
-          />
-        ) : null}
-        <Grid type="container" style={{ flexDirection: "column" }}>
-          <Grid type="item">
-            <Tooltip label="Telolet">
-              <Avatar
-                src="https://cdn.shopify.com/s/files/1/0051/4802/products/stickers_octocat_600x600.png?v=1520903827"
-                alt="Octocato"
-                size={50}
-                className={classes.classNameTest}
-                style={{ background: "white" }}
-              >
-                <AccountIcon />
-              </Avatar>
-            </Tooltip>
-          </Grid>
-
-          <Grid type="item">
-            <Button
-              variant="contained"
-              onClick={() => setState({ ...state, isOpen: !state.isOpen })}
-              className={classes.classNameTest}
-              style={{ background: "white", color: "black" }}
-            >
-              Drawer
-            </Button>
-          </Grid>
-
-          <Grid type="item">
-            <Tooltip label="All will be fine 0x0x0">
-              <Button
-                variant="contained"
-                onClick={() => setState({ ...state, show: !state.show })}
-                className={classes.classNameTest}
-                style={{ background: "white", color: "black" }}
-              >
-                Modal
-              </Button>
-            </Tooltip>
-
-            {state.show ? (
-              <Modal
-                show={state.show}
-                header={
-                  <Tooltip label="Maybe this work out for the better">
-                    <AccountIcon />
-                  </Tooltip>
-                }
-                footer={
-                  <Tooltip label="sakepo dake">
-                    <Button
-                      onClick={() => setState({ ...state, show: !state.show })}
-                    >
-                      Close
-                    </Button>
-                  </Tooltip>
-                }
-                close={() => setState({ ...state, show: !state.show })}
-              >
-                Body
-              </Modal>
-            ) : null}
-          </Grid>
-
-          <Grid type="item">
-            <Tooltip label="icon button">
-              <IconButton>
-                <AccountIcon />
-              </IconButton>
-            </Tooltip>
-          </Grid>
-
-          <Grid type="item">
-            <Tooltip label="There is a time when i feel really desperate">
-              <Switch
-                switchValues={["Val1", "Val2"]}
-                active={state.active}
-                onSwitch={value => setState({ ...state, active: value })}
-                className={classes.classNameTest}
-                style={{ background: "white" }}
-              />
-            </Tooltip>
-          </Grid>
-
-          <div>
-            <Tooltip label="My spirit as this as this divider">
-              <Divider variant="middle" />
-            </Tooltip>
-          </div>
-
-          <Grid type="item">
-            <Tooltip label="Your smile give me strength to advance even more">
-              <Select
-                variant="default"
-                value={state.optionValue}
-                onChange={e =>
-                  setState({ ...state, optionValue: e.target.value })
-                }
-                label="Select"
-                id="Select"
-                extra={{
-                  start: <AccountIcon color="black" />,
-                  end: <AccountIcon />
-                }}
-                className={classes.classNameTest}
-                style={{ background: "white", color: "black" }}
-              >
-                <option value={0} />
-                <option value={1}>Option 1</option>
-                <option value={2}>Option 2</option>
-                <option value={3}>Option 3</option>
-              </Select>
-            </Tooltip>
-          </Grid>
-
-          <Grid type="item">
-            <Tooltip label="Taste your smell like cherry">
-              <TextInput
-                label="Label"
-                value={state.inputValue}
-                id="Input"
-                name="Input"
-                placeholder="Input"
-                variant="outlined"
-                type="text"
-                extra={{ start: <AccountIcon /> }}
-                onChange={e =>
-                  setState({ ...state, inputValue: e.target.value })
-                }
-              />
-            </Tooltip>
-          </Grid>
-        </Grid>
-      </AppDrawer>
+    <div style={{ padding: 8 }}>
+      {customers && occupations && (
+        <Table
+          data={customers}
+          columns={columns}
+          title="Customers"
+          defaultSort={{
+            type: "descending",
+            column: "xxx"
+          }}
+          editable={{
+            onUpdate: (oldData, newData) => console.log({ oldData, newData }),
+            onDelete: oldData => console.log(oldData),
+            onAdd: newData => console.log(newData)
+          }}
+        />
+      )}
     </div>
   );
 };

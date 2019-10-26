@@ -9,6 +9,7 @@ import TableEmptyRow from "./TableEmptyRow";
 import TableRow from "./TableRow";
 import format from "date-fns/format";
 import { createUseStyles } from "react-jss";
+import { sort } from "../../utils/constants";
 
 const useStyles = createUseStyles({
   root: {
@@ -16,6 +17,7 @@ const useStyles = createUseStyles({
     flexDirection: "column"
   },
   body: {
+    overflowY: "hidden",
     overflowX: "auto"
   },
   table: {
@@ -61,45 +63,7 @@ const TableView = props => {
       tableData.length > 0 &&
       columns.findIndex(value => value.key === column) !== -1
     ) {
-      if (typeof tableData[0][column] === "number") {
-        if (type === "descending") {
-          setTableData(prevTableData =>
-            JSON.parse(JSON.stringify(prevTableData)).sort(
-              (a, b) => b[column] - a[column]
-            )
-          );
-        } else {
-          setTableData(prevTableData =>
-            JSON.parse(JSON.stringify(prevTableData)).sort(
-              (a, b) => a[column] - b[column]
-            )
-          );
-        }
-      } else {
-        if (type === "descending") {
-          setTableData(prevTableData =>
-            JSON.parse(JSON.stringify(prevTableData))
-              .sort((a, b) =>
-                a[column].toUpperCase() < b[column].toUpperCase()
-                  ? -1
-                  : a[column].toUpperCase() > b[column].toUpperCase()
-                  ? 1
-                  : 0
-              )
-              .reverse()
-          );
-        } else {
-          setTableData(prevTableData =>
-            JSON.parse(JSON.stringify(prevTableData)).sort((a, b) =>
-              a[column].toUpperCase() < b[column].toUpperCase()
-                ? -1
-                : a[column].toUpperCase() > b[column].toUpperCase()
-                ? 1
-                : 0
-            )
-          );
-        }
-      }
+      setTableData(prevTableData => sort(prevTableData, type, column));
     }
   };
 
@@ -127,17 +91,21 @@ const TableView = props => {
           const column = columns.find(column => column.key === value[0]);
 
           if (column.type === "select") {
-            return value[1].some(option =>
-              new RegExp(`^${option}$`, "mi").test(item[value[0]])
-            );
+            return value[1].some(option => {
+              const regexpString = option.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+              );
+              return new RegExp(`^${regexpString}$`, "mi").test(item[value[0]]);
+            });
           }
 
           let regexpString = "";
 
           if (column.type === "numeric") {
-            regexpString = `^${value[1]}$`;
+            regexpString = `^${value[1]}`;
           } else {
-            regexpString = `${value[1].replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`;
+            regexpString = value[1].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
           }
 
           const regexp = new RegExp(regexpString, "mi");
@@ -165,11 +133,31 @@ const TableView = props => {
 
       tempData.map((item, index) => {
         item.tableData = `table-data-${index}`;
-        return columns.map(column =>
-          column.type === "select"
-            ? (item[column.key] = column.option[item[column.key]])
-            : null
-        );
+
+        return columns.map(column => {
+          if (column.type === "select") {
+            if (column.children && column.children.length > 0) {
+              let childrenValue = item[column.key];
+              column.children.map(
+                childrenColumn =>
+                  (childrenValue = childrenValue[childrenColumn])
+              );
+              return (item[column.key] = column.option[childrenValue]);
+            }
+
+            return (item[column.key] = column.option[item[column.key]]);
+          }
+
+          if (column.children && column.children.length > 0) {
+            let childrenValue = item[column.key];
+            column.children.map(
+              childrenColumn => (childrenValue = childrenValue[childrenColumn])
+            );
+            return (item[column.key] = childrenValue);
+          }
+
+          return null;
+        });
       });
       setDataWithId(JSON.parse(JSON.stringify(tempData)));
       setTableData(JSON.parse(JSON.stringify(tempData)));
@@ -181,7 +169,7 @@ const TableView = props => {
       <TableHeader
         {...header}
         title={title}
-        showAdd={Boolean(editable.onAdd)}
+        showAdd={Boolean(editable && editable.onAdd)}
         disableAdd={Boolean(activeRow) && activeRow !== "new"}
         onShowAdd={setActiveRow}
         onSearch={handleSearch}
@@ -192,7 +180,7 @@ const TableView = props => {
             {...tableHead}
             columns={columns}
             actionColumn={Boolean(
-              editable && (editable.onUpdate || editable.onDelete)
+              (editable && (editable.onUpdate || editable.onDelete)) || actions
             )}
             disableSort={disableSort}
             defaultSort={defaultSort}
@@ -203,7 +191,8 @@ const TableView = props => {
               {...tableFilter}
               columns={columns}
               actionColumn={Boolean(
-                editable && (editable.onUpdate || editable.onDelete)
+                (editable && (editable.onUpdate || editable.onDelete)) ||
+                  actions
               )}
               disableFilter={disableFilter}
               onFilter={handleFilter}
@@ -231,7 +220,7 @@ const TableView = props => {
               tableAction={tableAction}
               columns={columns}
               activeRow={activeRow}
-              editable={{ onAdd: editable.onAdd }}
+              editable={editable ? { onAdd: editable.onAdd } : null}
               onAction={setActiveRow}
             />
             {tableData.length === 0 ? (
@@ -287,9 +276,15 @@ TableView.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       key: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(["numeric", "select", "date"]),
+      type: PropTypes.oneOf(["numeric", "select", "date", "file"]),
       option: PropTypes.object,
       format: PropTypes.string,
+      children: PropTypes.arrayOf(PropTypes.string),
+      render: PropTypes.func,
+      currency: PropTypes.shape({
+        countryId: PropTypes.string.isRequired,
+        currencyCode: PropTypes.string.isRequired
+      }),
       styleOptions: PropTypes.shape({
         head: PropTypes.object,
         cell: PropTypes.object
@@ -300,7 +295,7 @@ TableView.propTypes = {
     PropTypes.shape({
       component: PropTypes.oneOf(["Button", "IconButton"]),
       variant: PropTypes.oneOf(["contained", "outlined", "text"]),
-      href: PropTypes.string,
+      href: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
       icon: PropTypes.element,
       label: PropTypes.any,
       onClick: PropTypes.func

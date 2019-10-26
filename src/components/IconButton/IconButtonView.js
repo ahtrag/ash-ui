@@ -110,7 +110,7 @@ IconButtonView.propTypes = {
   /**
    * Hyperlink, only work when component props set to a
    */
-  href: PropTypes.string,
+  href: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 
   /**
    * Override default styles with inline style

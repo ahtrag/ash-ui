@@ -30,9 +30,9 @@ TextInputView.propTypes = {
   label: PropTypes.string,
 
   /**
-   * Label of TextInput
+   * value of TextInput
    */
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /**
    * Id of TextInput component as identifier
@@ -43,6 +43,11 @@ TextInputView.propTypes = {
    * Name of TextInput component as identifier
    */
   name: PropTypes.string,
+
+  /**
+   * File type accepted by input type file
+   */
+  accept: PropTypes.string,
 
   /**
    * Color of the TextInput border
@@ -68,8 +73,18 @@ TextInputView.propTypes = {
    * 3. password
    * 4. number,
    * 5. tel
+   * 6. date
+   * 7. file
    */
-  type: PropTypes.oneOf(["text", "email", "password", "number", "tel"]),
+  type: PropTypes.oneOf([
+    "text",
+    "email",
+    "password",
+    "number",
+    "tel",
+    "date",
+    "file"
+  ]),
 
   /**
    * Add object of element in the start and end of TextInput

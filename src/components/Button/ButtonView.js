@@ -15,6 +15,7 @@ const useStyles = createUseStyles({
     padding: "12px 24px",
     cursor: "pointer",
     overflow: "hidden",
+    "-webkit-tap-highlight-color": "transparent",
     "&:focus": {
       outline: "none"
     }
@@ -174,7 +175,7 @@ ButtonView.propTypes = {
   /**
    * Hyperlink, only work when component props set to a
    */
-  href: PropTypes.string,
+  href: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 
   /**
    * If set to true, the Button will have 100% width

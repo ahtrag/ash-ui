@@ -78,9 +78,9 @@ const TableFilter = props => {
           style={renderStyle(styleOptions && styleOptions.root)}
         ></td>
       ) : null}
-      {columns.map(column => (
+      {columns.map((column, index) => (
         <td
-          key={`filter-${column.key}`}
+          key={`filter-${column.key}-${index}`}
           className={renderClassName(
             classes.tableCell,
             classes.tableFilterCell,
@@ -125,6 +125,7 @@ const TableFilter = props => {
                 )}
                 style={renderStyle(styleOptions && styleOptions.input)}
                 noMargin
+                fullWidth
               />
             )
           ) : null}
@@ -143,9 +144,15 @@ TableFilter.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       key: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(["numeric", "select", "date"]),
+      type: PropTypes.oneOf(["numeric", "select", "date", "file"]),
       option: PropTypes.object,
       format: PropTypes.string,
+      children: PropTypes.arrayOf(PropTypes.string),
+      render: PropTypes.func,
+      currency: PropTypes.shape({
+        countryId: PropTypes.string.isRequired,
+        currencyCode: PropTypes.string.isRequired
+      }),
       styleOptions: PropTypes.shape({
         head: PropTypes.object,
         cell: PropTypes.object

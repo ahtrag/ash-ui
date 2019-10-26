@@ -35,6 +35,7 @@ const TableAction = props => {
   const {
     row,
     actions,
+    columns,
     active,
     disable,
     classNameOptions,
@@ -45,6 +46,31 @@ const TableAction = props => {
     onCancel
   } = props;
   const classes = useStyles();
+
+  const handleClickAction = (row, action) => {
+    const oldData = { ...row };
+    delete oldData.tableData;
+
+    columns.map(column => {
+      if (oldData[column.key] && column.type === "select") {
+        try {
+          oldData[column.key] = JSON.parse(
+            Object.keys(column.option).find(
+              key => column.option[key] === oldData[column.key]
+            )
+          );
+        } catch (error) {
+          oldData[column.key] = Object.keys(column.option).find(
+            key => column.option[key] === oldData[column.key]
+          );
+        }
+      }
+
+      return null;
+    });
+
+    action.onClick(oldData);
+  };
 
   return active || editable || actions ? (
     <td
@@ -120,9 +146,17 @@ const TableAction = props => {
                         classNameOptions && classNameOptions.action
                       )}
                       style={renderStyle(styleOptions && styleOptions.action)}
-                      href={action.href}
+                      href={
+                        action.href
+                          ? typeof action.href === "string"
+                            ? action.href
+                            : () => action.href(row)
+                          : null
+                      }
                       onClick={
-                        action.onClick ? () => action.onClick(row) : null
+                        action.onClick
+                          ? () => handleClickAction(row, action)
+                          : null
                       }
                       disable={disable}
                     >
@@ -137,9 +171,17 @@ const TableAction = props => {
                         classNameOptions && classNameOptions.action
                       )}
                       style={renderStyle(styleOptions && styleOptions.action)}
-                      href={action.href}
+                      href={
+                        action.href
+                          ? typeof action.href === "string"
+                            ? action.href
+                            : () => action.href(row)
+                          : null
+                      }
                       onClick={
-                        action.onClick ? () => action.onClick(row) : null
+                        action.onClick
+                          ? () => handleClickAction(row, action)
+                          : null
                       }
                       disable={disable}
                     >
@@ -165,10 +207,29 @@ TableAction.propTypes = {
     PropTypes.shape({
       component: PropTypes.oneOf(["Button", "IconButton"]),
       variant: PropTypes.oneOf(["contained", "outlined", "text"]),
-      href: PropTypes.string,
+      href: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
       icon: PropTypes.element,
       label: PropTypes.any,
       onClick: PropTypes.func
+    })
+  ),
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      key: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(["numeric", "select", "date", "file"]),
+      option: PropTypes.object,
+      format: PropTypes.string,
+      children: PropTypes.arrayOf(PropTypes.string),
+      render: PropTypes.func,
+      currency: PropTypes.shape({
+        countryId: PropTypes.string.isRequired,
+        currencyCode: PropTypes.string.isRequired
+      }),
+      styleOptions: PropTypes.shape({
+        head: PropTypes.object,
+        cell: PropTypes.object
+      })
     })
   ),
   active: PropTypes.bool,

@@ -81,7 +81,17 @@ LoadingView.propTypes = {
    * LoadingWave Props backgriund of bars and pages.
    * Default white.
    */
-  background: PropTypes.string
+  background: PropTypes.string,
+
+  /**
+   * Override default styles with className
+   */
+  className: PropTypes.string,
+
+  /**
+   * Override default styles with inline style
+   */
+  style: PropTypes.object
 };
 
 export default LoadingView;

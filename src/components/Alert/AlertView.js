@@ -4,10 +4,6 @@ import ReactDOM from "react-dom";
 import Paper from "../Paper";
 import Text from "../Text";
 import Button from "../Button";
-import { ReactComponent as SuccessSVG } from "../../assets/success.svg";
-import { ReactComponent as InfoSVG } from "../../assets/info.svg";
-import { ReactComponent as WarningSVG } from "../../assets/warning.svg";
-import { ReactComponent as ErrorSVG } from "../../assets/error.svg";
 import { createUseStyles } from "react-jss";
 import { CSSTransition } from "react-transition-group";
 import { renderStyle, renderClassName } from "../../utils/constants";
@@ -24,6 +20,7 @@ const useStyles = createUseStyles({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
+    zIndex: 300,
     boxSizing: "border-box"
   },
   popupEnter: {
@@ -38,7 +35,7 @@ const useStyles = createUseStyles({
     left: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
     cursor: "pointer"
   },
   paper: {
@@ -79,57 +76,14 @@ const AlertView = props => {
 
   const classes = useStyles();
 
-  const renderImage = () => {
-    switch (variant) {
-      case "success":
-        return (
-          <SuccessSVG
-            className={renderClassName(
-              classes.image,
-              classNameOptions && classNameOptions.image
-            )}
-            style={renderStyle(styleOptions && styleOptions.image)}
-          />
-        );
-      case "info":
-        return (
-          <InfoSVG
-            className={renderClassName(
-              classes.image,
-              classNameOptions && classNameOptions.image
-            )}
-            style={renderStyle(styleOptions && styleOptions.image)}
-          />
-        );
-      case "warning":
-        return (
-          <WarningSVG
-            className={renderClassName(
-              classes.image,
-              classNameOptions && classNameOptions.image
-            )}
-            style={renderStyle(styleOptions && styleOptions.image)}
-          />
-        );
-      case "error":
-        return (
-          <ErrorSVG
-            className={renderClassName(
-              classes.image,
-              classNameOptions && classNameOptions.image
-            )}
-            style={renderStyle(styleOptions && styleOptions.image)}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   useEffect(() => {
-    document.getElementsByTagName("html")[0].style.overflow = "hidden";
+    if (show) {
+      document.getElementsByTagName("html")[0].style.overflow = "hidden";
+    } else {
+      document.getElementsByTagName("html")[0].style.overflow = "";
+    }
     return () => (document.getElementsByTagName("html")[0].style.overflow = "");
-  }, []);
+  }, [show]);
 
   return ReactDOM.createPortal(
     <CSSTransition
@@ -151,7 +105,15 @@ const AlertView = props => {
           )}
           style={renderStyle(styleOptions && styleOptions.root)}
         >
-          {renderImage()}
+          <img
+            src={`/assets/${variant}.svg`}
+            alt={variant}
+            className={renderClassName(
+              classes.image,
+              classNameOptions && classNameOptions.image
+            )}
+            style={renderStyle(styleOptions && styleOptions.image)}
+          />
           <Text
             variant="h3"
             align="center"

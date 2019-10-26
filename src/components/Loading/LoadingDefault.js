@@ -5,6 +5,7 @@ import Text from "../Text";
 import { CSSTransition } from "react-transition-group";
 import { createUseStyles } from "react-jss";
 import { colors } from "../../utils/styles";
+import { renderClassName } from "../../utils/constants";
 
 const useStyles = createUseStyles({
   "@keyframes rotate": {
@@ -37,7 +38,8 @@ const useStyles = createUseStyles({
     height: "100%",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    zIndex: 200
   },
   overlay: {
     position: "absolute",
@@ -45,7 +47,7 @@ const useStyles = createUseStyles({
     left: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
     cursor: "pointer"
   },
   loadingWrapper: {
@@ -71,7 +73,7 @@ const useStyles = createUseStyles({
 });
 
 const LoadingDefault = props => {
-  const { show, random, overlay, label, color, size } = props;
+  const { show, random, overlay, label, color, size, className, style } = props;
   const classes = useStyles(size);
   const [stroke, setStroke] = useState(color);
 
@@ -97,7 +99,10 @@ const LoadingDefault = props => {
           <div className={classes.root}>
             <div className={classes.overlay} />
 
-            <div className={classes.loadingWrapper}>
+            <div
+              className={renderClassName(classes.loadingWrapper, className)}
+              style={style}
+            >
               <svg className={classes.circular}>
                 <circle
                   className={classes.circularPath}
@@ -112,7 +117,7 @@ const LoadingDefault = props => {
               </svg>
 
               {label ? (
-                <Text variant="h6" color="white" noMargin>
+                <Text variant="title" align="center" color="white" noMargin>
                   {label}
                 </Text>
               ) : null}
@@ -123,18 +128,26 @@ const LoadingDefault = props => {
       );
     }
     return (
-      <svg className={classes.circular}>
-        <circle
-          className={classes.circularPath}
-          cx="40"
-          cy="40"
-          r="20"
-          fill="none"
-          stroke={stroke}
-          strokeWidth="3"
-          strokeMiterlimit="10"
-        />
-      </svg>
+      <div
+        className={renderClassName(classes.loadingWrapper, className)}
+        style={style}
+      >
+        <svg className={classes.circular}>
+          <circle
+            className={classes.circularPath}
+            cx="40"
+            cy="40"
+            r="20"
+            fill="none"
+            stroke={stroke}
+            strokeWidth="3"
+            strokeMiterlimit="10"
+          />
+        </svg>
+        <Text variant="subtitle" align="center" noMargin>
+          {label}
+        </Text>
+      </div>
     );
   }
 
@@ -181,7 +194,17 @@ LoadingDefault.propTypes = {
    * Display loading with overlay
    * @defaultValue false
    */
-  overlay: PropTypes.bool
+  overlay: PropTypes.bool,
+
+  /**
+   * Override default styles with className
+   */
+  className: PropTypes.string,
+
+  /**
+   * Override default styles with inline style
+   */
+  style: PropTypes.object
 };
 
 export default LoadingDefault;

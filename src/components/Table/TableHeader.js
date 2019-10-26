@@ -6,11 +6,13 @@ import IconButton from "../IconButton/IconButtonView";
 import SearchIcon from "mdi-react/SearchIcon";
 import PlusCircleIcon from "mdi-react/PlusCircleIcon";
 import { createUseStyles } from "react-jss";
-import { renderClassName, renderStyle } from "../../utils/constants";
+import { renderClassName, renderStyle, useMedia } from "../../utils/constants";
+import { breakpoints } from "../../utils/theme";
 
 const useStyles = createUseStyles({
   header: {
     display: "flex",
+    flexWrap: "wrap",
     alignItems: "center",
     padding: 16
   },
@@ -35,6 +37,7 @@ const TableHeader = props => {
   } = props;
   const classes = useStyles();
   const [searchValue, setSearchValue] = useState("");
+  const isMobile = useMedia(breakpoints.down("sm"));
 
   const handleChange = e => {
     const { value } = e.target;
@@ -50,7 +53,9 @@ const TableHeader = props => {
       )}
       style={renderStyle(styleOptions && styleOptions.root)}
     >
-      {typeof title === "string" || !title ? (
+      {typeof title !== "string" && title ? (
+        title
+      ) : (
         <Text
           variant="h4"
           className={renderClassName(
@@ -61,8 +66,6 @@ const TableHeader = props => {
         >
           {title}
         </Text>
-      ) : (
-        title
       )}
       {search ? (
         <TextInput
@@ -74,6 +77,7 @@ const TableHeader = props => {
           className={renderClassName(
             classNameOptions && classNameOptions.search
           )}
+          fullWidth={isMobile}
           noMargin
         />
       ) : null}

@@ -14,13 +14,7 @@ const useStyles = createUseStyles({
     marginTop: 16,
     marginBottom: 4,
     minWidth: props =>
-      props.multiple
-        ? "auto"
-        : props.width
-        ? props.width
-        : props.fullWidth
-        ? "100%"
-        : 120,
+      props.width ? props.width : props.fullWidth ? "100%" : 120,
     width: props =>
       props.multiple ? (props.width ? props.width : 120) : "auto",
     display: "inline-flex",
@@ -29,7 +23,7 @@ const useStyles = createUseStyles({
   },
   inputLabel: {
     position: "absolute",
-    transform: "scale(1) translate(8px, 10px)",
+    transform: "scale(1) translate(8px, 14px)",
     transformOrigin: "top left",
     cursor: "pointer",
     transition: "transform 0.3s ease-in-out"
@@ -54,7 +48,7 @@ const useStyles = createUseStyles({
     alignItems: "center",
     backgroundColor: "transparent",
     cursor: "pointer",
-    minHeight: 40,
+    minHeight: 48,
     width: "100%",
     boxSizing: "border-box",
     border: 0,
@@ -63,15 +57,15 @@ const useStyles = createUseStyles({
     }
   },
   selectExtraLeft: {
-    paddingLeft: 32
+    paddingLeft: 40
   },
   selectExtraRight: {
-    paddingRight: 24
+    paddingRight: 40
   },
   extra: {
     position: "absolute",
     display: "flex",
-    zIndex: -1
+    zIndex: 1
   },
   extraLeft: {
     left: 0
@@ -83,7 +77,8 @@ const useStyles = createUseStyles({
     margin: 0
   },
   normal: {
-    justifyContent: "flex-start"
+    justifyContent: "flex-start",
+    textAlign: "left"
   },
   selectedMenu: {
     "&:after": {
@@ -297,16 +292,11 @@ const SelectDefault = props => {
 SelectDefault.propTypes = {
   options: PropTypes.arrayOf(
     PropTypes.shape({
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired,
+      value: PropTypes.any.isRequired,
       label: PropTypes.any
     })
   ).isRequired,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-    PropTypes.array
-  ]),
+  value: PropTypes.any,
   extra: PropTypes.shape({
     start: PropTypes.element,
     end: PropTypes.element

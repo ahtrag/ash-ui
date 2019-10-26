@@ -46,8 +46,7 @@ SelectView.propTypes = {
    */
   options: PropTypes.arrayOf(
     PropTypes.shape({
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired,
+      value: PropTypes.any.isRequired,
       label: PropTypes.any
     })
   ).isRequired,
@@ -62,11 +61,7 @@ SelectView.propTypes = {
   /**
    * Value of option selected
    */
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-    PropTypes.array
-  ]),
+  value: PropTypes.any,
 
   /**
    * event target option selected

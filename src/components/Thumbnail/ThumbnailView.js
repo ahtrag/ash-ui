@@ -8,9 +8,10 @@ const useStyles = createUseStyles({
     display: "flex",
     alignItems: "center",
     width: "100%",
+    padding: "16px 24px",
+    boxSizing: "border-box",
     height: props => props.height,
     backgroundColor: props => props.color,
-    backgroundImage: props => `url(${props.image})`,
     backgroundSize: "contain",
     backgroundRepeat: "no-repeat",
     backgroundPosition: props =>
@@ -23,22 +24,25 @@ const useStyles = createUseStyles({
 });
 
 const ThumbnailView = props => {
-  const { title, className, style, ...otherProps } = props;
+  const { title, classNameOptions, styleOptions, ...otherProps } = props;
   const classes = useStyles(otherProps);
   return (
     <div
       className={renderClassName(
         classes.thumbnail,
-        className && className.root
+        classNameOptions && classNameOptions.root
       )}
-      style={renderStyle(style && style.root)}
+      style={renderStyle(
+        { backgroundImage: `url(${props.image})` },
+        styleOptions && styleOptions.root
+      )}
     >
       <h1
         className={renderClassName(
           classes.thumbnailTitle,
-          className && className.title
+          classNameOptions && classNameOptions.title
         )}
-        style={renderStyle(style && style.title)}
+        style={renderStyle(styleOptions && styleOptions.title)}
       >
         {title}
       </h1>
@@ -81,7 +85,7 @@ ThumbnailView.propTypes = {
   /**
    * Override default styles with className
    */
-  className: PropTypes.shape({
+  classNameOptions: PropTypes.shape({
     root: PropTypes.string,
     title: PropTypes.string
   }),
@@ -89,7 +93,7 @@ ThumbnailView.propTypes = {
   /**
    * Override default styles with style
    */
-  style: PropTypes.shape({
+  styleOptions: PropTypes.shape({
     root: PropTypes.object,
     title: PropTypes.object
   })

@@ -17,56 +17,426 @@ const useStyles = createUseStyles({
     boxSizing: "border-box",
     padding: props => props.padding * 4
   },
-  xs: props =>
-    props.xs
-      ? {
-          [breakpoints.up("xs")]: {
-            flexGrow: 0,
-            flexBasis: `${(props.xs / 12) * 100}%`,
-            maxWidth: `${(props.xs / 12) * 100}%`
-          }
-        }
-      : null,
-  sm: props =>
-    props.sm
-      ? {
-          [breakpoints.up("sm")]: {
-            flexGrow: 0,
-            flexBasis: `${(props.sm / 12) * 100}%`,
-            maxWidth: `${(props.sm / 12) * 100}%`
-          }
-        }
-      : null,
-  md: props =>
-    props.md
-      ? {
-          [breakpoints.up("md")]: {
-            flexGrow: 0,
-            flexBasis: `${(props.md / 12) * 100}%`,
-            maxWidth: `${(props.md / 12) * 100}%`
-          }
-        }
-      : null,
-  lg: props =>
-    props.lg
-      ? {
-          [breakpoints.up("lg")]: {
-            flexGrow: 0,
-            flexBasis: `${(props.lg / 12) * 100}%`,
-            maxWidth: `${(props.lg / 12) * 100}%`
-          }
-        }
-      : null,
-  xl: props =>
-    props.xl
-      ? {
-          [breakpoints.up("xl")]: {
-            flexGrow: 0,
-            flexBasis: `${(props.xl / 12) * 100}%`,
-            maxWidth: `${(props.xl / 12) * 100}%`
-          }
-        }
-      : null
+  xs1: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(1 / 12) * 100}%`,
+      maxWidth: `${(1 / 12) * 100}%`
+    }
+  },
+  xs2: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(2 / 12) * 100}%`,
+      maxWidth: `${(2 / 12) * 100}%`
+    }
+  },
+  xs3: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(3 / 12) * 100}%`,
+      maxWidth: `${(3 / 12) * 100}%`
+    }
+  },
+  xs4: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(4 / 12) * 100}%`,
+      maxWidth: `${(4 / 12) * 100}%`
+    }
+  },
+  xs5: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(5 / 12) * 100}%`,
+      maxWidth: `${(5 / 12) * 100}%`
+    }
+  },
+  xs6: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(6 / 12) * 100}%`,
+      maxWidth: `${(6 / 12) * 100}%`
+    }
+  },
+  xs7: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(7 / 12) * 100}%`,
+      maxWidth: `${(7 / 12) * 100}%`
+    }
+  },
+  xs8: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(8 / 12) * 100}%`,
+      maxWidth: `${(8 / 12) * 100}%`
+    }
+  },
+  xs9: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(9 / 12) * 100}%`,
+      maxWidth: `${(9 / 12) * 100}%`
+    }
+  },
+  xs10: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(10 / 12) * 100}%`,
+      maxWidth: `${(10 / 12) * 100}%`
+    }
+  },
+  xs11: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(11 / 12) * 100}%`,
+      maxWidth: `${(11 / 12) * 100}%`
+    }
+  },
+  xs12: {
+    [breakpoints.up("xs")]: {
+      flexGrow: 0,
+      flexBasis: `${(12 / 12) * 100}%`,
+      maxWidth: `${(12 / 12) * 100}%`
+    }
+  },
+  sm1: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(1 / 12) * 100}%`,
+      maxWidth: `${(1 / 12) * 100}%`
+    }
+  },
+  sm2: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(2 / 12) * 100}%`,
+      maxWidth: `${(2 / 12) * 100}%`
+    }
+  },
+  sm3: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(3 / 12) * 100}%`,
+      maxWidth: `${(3 / 12) * 100}%`
+    }
+  },
+  sm4: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(4 / 12) * 100}%`,
+      maxWidth: `${(4 / 12) * 100}%`
+    }
+  },
+  sm5: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(5 / 12) * 100}%`,
+      maxWidth: `${(5 / 12) * 100}%`
+    }
+  },
+  sm6: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(6 / 12) * 100}%`,
+      maxWidth: `${(6 / 12) * 100}%`
+    }
+  },
+  sm7: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(7 / 12) * 100}%`,
+      maxWidth: `${(7 / 12) * 100}%`
+    }
+  },
+  sm8: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(8 / 12) * 100}%`,
+      maxWidth: `${(8 / 12) * 100}%`
+    }
+  },
+  sm9: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(9 / 12) * 100}%`,
+      maxWidth: `${(9 / 12) * 100}%`
+    }
+  },
+  sm10: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(10 / 12) * 100}%`,
+      maxWidth: `${(10 / 12) * 100}%`
+    }
+  },
+  sm11: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(11 / 12) * 100}%`,
+      maxWidth: `${(11 / 12) * 100}%`
+    }
+  },
+  sm12: {
+    [breakpoints.up("sm")]: {
+      flexGrow: 0,
+      flexBasis: `${(12 / 12) * 100}%`,
+      maxWidth: `${(12 / 12) * 100}%`
+    }
+  },
+  md1: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(1 / 12) * 100}%`,
+      maxWidth: `${(1 / 12) * 100}%`
+    }
+  },
+  md2: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(2 / 12) * 100}%`,
+      maxWidth: `${(2 / 12) * 100}%`
+    }
+  },
+  md3: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(3 / 12) * 100}%`,
+      maxWidth: `${(3 / 12) * 100}%`
+    }
+  },
+  md4: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(4 / 12) * 100}%`,
+      maxWidth: `${(4 / 12) * 100}%`
+    }
+  },
+  md5: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(5 / 12) * 100}%`,
+      maxWidth: `${(5 / 12) * 100}%`
+    }
+  },
+  md6: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(6 / 12) * 100}%`,
+      maxWidth: `${(6 / 12) * 100}%`
+    }
+  },
+  md7: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(7 / 12) * 100}%`,
+      maxWidth: `${(7 / 12) * 100}%`
+    }
+  },
+  md8: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(8 / 12) * 100}%`,
+      maxWidth: `${(8 / 12) * 100}%`
+    }
+  },
+  md9: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(9 / 12) * 100}%`,
+      maxWidth: `${(9 / 12) * 100}%`
+    }
+  },
+  md10: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(10 / 12) * 100}%`,
+      maxWidth: `${(10 / 12) * 100}%`
+    }
+  },
+  md11: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(11 / 12) * 100}%`,
+      maxWidth: `${(11 / 12) * 100}%`
+    }
+  },
+  md12: {
+    [breakpoints.up("md")]: {
+      flexGrow: 0,
+      flexBasis: `${(12 / 12) * 100}%`,
+      maxWidth: `${(12 / 12) * 100}%`
+    }
+  },
+  lg1: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(1 / 12) * 100}%`,
+      maxWidth: `${(1 / 12) * 100}%`
+    }
+  },
+  lg2: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(2 / 12) * 100}%`,
+      maxWidth: `${(2 / 12) * 100}%`
+    }
+  },
+  lg3: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(3 / 12) * 100}%`,
+      maxWidth: `${(3 / 12) * 100}%`
+    }
+  },
+  lg4: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(4 / 12) * 100}%`,
+      maxWidth: `${(4 / 12) * 100}%`
+    }
+  },
+  lg5: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(5 / 12) * 100}%`,
+      maxWidth: `${(5 / 12) * 100}%`
+    }
+  },
+  lg6: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(6 / 12) * 100}%`,
+      maxWidth: `${(6 / 12) * 100}%`
+    }
+  },
+  lg7: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(7 / 12) * 100}%`,
+      maxWidth: `${(7 / 12) * 100}%`
+    }
+  },
+  lg8: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(8 / 12) * 100}%`,
+      maxWidth: `${(8 / 12) * 100}%`
+    }
+  },
+  lg9: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(9 / 12) * 100}%`,
+      maxWidth: `${(9 / 12) * 100}%`
+    }
+  },
+  lg10: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(10 / 12) * 100}%`,
+      maxWidth: `${(10 / 12) * 100}%`
+    }
+  },
+  lg11: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(11 / 12) * 100}%`,
+      maxWidth: `${(11 / 12) * 100}%`
+    }
+  },
+  lg12: {
+    [breakpoints.up("lg")]: {
+      flexGrow: 0,
+      flexBasis: `${(12 / 12) * 100}%`,
+      maxWidth: `${(12 / 12) * 100}%`
+    }
+  },
+  xl1: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(1 / 12) * 100}%`,
+      maxWidth: `${(1 / 12) * 100}%`
+    }
+  },
+  xl2: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(2 / 12) * 100}%`,
+      maxWidth: `${(2 / 12) * 100}%`
+    }
+  },
+  xl3: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(3 / 12) * 100}%`,
+      maxWidth: `${(3 / 12) * 100}%`
+    }
+  },
+  xl4: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(4 / 12) * 100}%`,
+      maxWidth: `${(4 / 12) * 100}%`
+    }
+  },
+  xl5: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(5 / 12) * 100}%`,
+      maxWidth: `${(5 / 12) * 100}%`
+    }
+  },
+  xl6: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(6 / 12) * 100}%`,
+      maxWidth: `${(6 / 12) * 100}%`
+    }
+  },
+  xl7: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(7 / 12) * 100}%`,
+      maxWidth: `${(7 / 12) * 100}%`
+    }
+  },
+  xl8: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(8 / 12) * 100}%`,
+      maxWidth: `${(8 / 12) * 100}%`
+    }
+  },
+  xl9: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(9 / 12) * 100}%`,
+      maxWidth: `${(9 / 12) * 100}%`
+    }
+  },
+  xl10: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(10 / 12) * 100}%`,
+      maxWidth: `${(10 / 12) * 100}%`
+    }
+  },
+  xl11: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(11 / 12) * 100}%`,
+      maxWidth: `${(11 / 12) * 100}%`
+    }
+  },
+  xl12: {
+    [breakpoints.up("xl")]: {
+      flexGrow: 0,
+      flexBasis: `${(12 / 12) * 100}%`,
+      maxWidth: `${(12 / 12) * 100}%`
+    }
+  }
 });
 
 const GridView = props => {
@@ -85,15 +455,11 @@ const GridView = props => {
     className,
     style
   } = props;
+
   const classes = useStyles({
     justifyContent,
     alignItems,
     direction,
-    xs,
-    sm,
-    md,
-    lg,
-    xl,
     padding
   });
 
@@ -112,11 +478,11 @@ const GridView = props => {
     <div
       className={renderClassName(
         classes.item,
-        xs > 0 && xs < 13 && classes.xs,
-        sm > 0 && sm < 13 && classes.sm,
-        md > 0 && md < 13 && classes.md,
-        lg > 0 && lg < 13 && classes.lg,
-        xl > 0 && xl < 13 && classes.xl,
+        xs > 0 && xs < 13 && classes[`xs${xs}`],
+        sm > 0 && sm < 13 && classes[`sm${sm}`],
+        md > 0 && md < 13 && classes[`md${md}`],
+        lg > 0 && lg < 13 && classes[`lg${lg}`],
+        xl > 0 && xl < 13 && classes[`xl${xl}`],
         className
       )}
       style={style}

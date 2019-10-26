@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import DrawerDefault from "./DrawerDefault";
 import DrawerTemporary from "./DrawerTemporary";
+import DrawerPermanent from "./DrawerPermanent";
 
 const DrawerView = props => {
   const { variant, ...drawerProps } = props;
@@ -11,6 +12,8 @@ const DrawerView = props => {
       return <DrawerDefault {...drawerProps} />;
     case "temporary":
       return <DrawerTemporary {...drawerProps} />;
+    case "permanent":
+      return <DrawerPermanent {...drawerProps} />;
     default:
       return <DrawerDefault {...drawerProps} />;
   }
@@ -24,7 +27,7 @@ DrawerView.propTypes = {
   /**
    * Variant of Drawer
    */
-  variant: PropTypes.oneOf(["default", "temporary"]),
+  variant: PropTypes.oneOf(["default", "temporary", "permanent"]),
 
   /**
    * Toggle Drawer open
@@ -37,21 +40,28 @@ DrawerView.propTypes = {
   width: PropTypes.number,
 
   /**
+   * Pathname from the router props
+   */
+  pathname: PropTypes.string,
+
+  /**
    * Override default styles with className
    */
-  className: PropTypes.shape({
+  classNameOptions: PropTypes.shape({
     root: PropTypes.string,
     listItem: PropTypes.string,
-    link: PropTypes.string
+    link: PropTypes.string,
+    icon: PropTypes.string
   }),
 
   /**
    * Override default styles with style
    */
-  style: PropTypes.shape({
+  styleOptions: PropTypes.shape({
     root: PropTypes.object,
     listItem: PropTypes.object,
-    link: PropTypes.object
+    link: PropTypes.object,
+    icon: PropTypes.object
   }),
 
   /**

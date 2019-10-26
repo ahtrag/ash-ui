@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import IconButton from "../IconButton";
+import Text from "../Text";
 import EyeIcon from "mdi-react/EyeIcon";
 import EyeOffIcon from "mdi-react/EyeOffIcon";
 import { createUseStyles } from "react-jss";
@@ -61,6 +62,13 @@ const useStyles = createUseStyles({
   },
   noMargin: {
     margin: 0
+  },
+  fileInput: {
+    display: "none"
+  },
+  fileInputLabel: {
+    display: "flex",
+    alignItems: "center"
   }
 });
 
@@ -70,6 +78,7 @@ const TextInputDefault = props => {
     value,
     id,
     name,
+    accept,
     color,
     placeholder,
     type,
@@ -102,7 +111,7 @@ const TextInputDefault = props => {
           htmlFor={id}
           className={renderClassName(
             classes.inputLabel,
-            (focus || value || (extra && extra.start)) &&
+            (focus || value || (extra && extra.start) || type === "file") &&
               classes.focusInputLabel
           )}
         >
@@ -121,21 +130,60 @@ const TextInputDefault = props => {
             {extra.start}
           </div>
         )}
-        <input
-          type={type === "password" && showPassword ? "text" : type}
-          placeholder={!label ? placeholder : focus ? placeholder : ""}
-          value={value}
-          id={id}
-          name={name}
-          className={renderClassName(classes.input, className)}
-          style={style}
-          onChange={onChange}
-          onFocus={e => {
-            setFocus(true);
-            return Boolean(onFocus) ? onFocus(e) : null;
-          }}
-          onBlur={() => setFocus(false)}
-        />
+        {type === "file" ? (
+          <label
+            className={renderClassName(
+              classes.input,
+              classes.fileInputLabel,
+              className
+            )}
+            style={style}
+          >
+            <Text variant="caption" noMargin>
+              {value ? value : "Choose File"}
+            </Text>
+            <input
+              type={type}
+              id={id}
+              name={name}
+              accept={accept}
+              className={classes.fileInput}
+              onChange={e =>
+                onChange({
+                  ...e,
+                  currentTarget: {
+                    ...e.currentTarget,
+                    value: e.currentTarget.value.split("\\")[
+                      e.currentTarget.value.split("\\").length - 1
+                    ]
+                  },
+                  target: {
+                    ...e.target,
+                    value: e.target.value.split("\\")[
+                      e.target.value.split("\\").length - 1
+                    ]
+                  }
+                })
+              }
+            />
+          </label>
+        ) : (
+          <input
+            type={type === "password" && showPassword ? "text" : type}
+            placeholder={!label ? placeholder : focus ? placeholder : ""}
+            value={value}
+            id={id}
+            name={name}
+            className={renderClassName(classes.input, className)}
+            style={style}
+            onChange={onChange}
+            onFocus={e => {
+              setFocus(true);
+              return Boolean(onFocus) ? onFocus(e) : null;
+            }}
+            onBlur={() => setFocus(false)}
+          />
+        )}
         {extra && extra.end ? (
           <div className={classes.extra}>{extra.end}</div>
         ) : type === "password" ? (
@@ -150,12 +198,21 @@ const TextInputDefault = props => {
 
 TextInputDefault.propTypes = {
   label: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   id: PropTypes.string,
   name: PropTypes.string,
+  accept: PropTypes.string,
   color: PropTypes.string,
   placeholder: PropTypes.string,
-  type: PropTypes.oneOf(["text", "email", "password", "number", "tel"]),
+  type: PropTypes.oneOf([
+    "text",
+    "email",
+    "password",
+    "number",
+    "tel",
+    "date",
+    "file"
+  ]),
   extra: PropTypes.shape({
     start: PropTypes.element,
     end: PropTypes.element

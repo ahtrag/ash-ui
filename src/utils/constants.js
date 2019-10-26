@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
+
 function renderClassName() {
   return [...arguments].filter(value => Boolean(value)).join(" ");
 }
@@ -10,6 +13,80 @@ const offset = element => {
   const { top, left, height, width } = element.getBoundingClientRect();
 
   return { top, left, height, width };
+};
+
+const escapeFalseValue = (type, value) => {
+  if (!value) {
+    return type === "string" ? "" : 0;
+  }
+  return value;
+};
+
+const sort = (array, type, key = null) => {
+  const newArray = JSON.parse(JSON.stringify(array));
+
+  if (
+    (key && typeof newArray[0][key] === "number") ||
+    typeof newArray[0] === "number"
+  ) {
+    return newArray.sort((a, b) =>
+      type === "ascending"
+        ? key
+          ? escapeFalseValue("number", a[key]) -
+            escapeFalseValue("number", b[key])
+          : escapeFalseValue("number", a) - escapeFalseValue("number", b)
+        : key
+        ? escapeFalseValue("number", b[key]) -
+          escapeFalseValue("number", a[key])
+        : escapeFalseValue("number", b) - escapeFalseValue("number", a)
+    );
+  }
+
+  return newArray.sort((a, b) =>
+    key
+      ? escapeFalseValue("string", a[key]).toUpperCase() <
+        escapeFalseValue("string", b[key]).toUpperCase()
+        ? type === "ascending"
+          ? -1
+          : 1
+        : escapeFalseValue("string", a[key]).toUpperCase() >
+          escapeFalseValue("string", b[key]).toUpperCase()
+        ? type === "ascending"
+          ? 1
+          : -1
+        : 0
+      : escapeFalseValue("string", a).toUpperCase() <
+        escapeFalseValue("string", b).toUpperCase()
+      ? type === "ascending"
+        ? -1
+        : 1
+      : escapeFalseValue("string", a).toUpperCase() >
+        escapeFalseValue("string", b).toUpperCase()
+      ? type === "ascending"
+        ? 1
+        : -1
+      : 0
+  );
+};
+
+const useMedia = mediaQuery => {
+  const newMediaQuery = mediaQuery ? mediaQuery.replace("@media ", "") : "";
+  const mediaQueryList = window.matchMedia(newMediaQuery);
+
+  const getValue = () => {
+    return mediaQueryList.matches;
+  };
+
+  const [value, setValue] = useState(getValue);
+
+  useEffect(() => {
+    const handler = () => setValue(getValue);
+    mediaQueryList.addListener(handler);
+
+    return () => mediaQueryList.removeListener(handler);
+  }, []);
+
+  return value;
 };
 
 const randomString = (length = 6) => {
@@ -84,14 +161,18 @@ const invalidUserName = name => {
   return false;
 };
 
-const invalidEmail = email => {
-  const regEx = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/g;
+const validateEmail = email => {
+  const regEx = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
-  if (regEx.test(email)) {
-    return false;
-  }
+  return regEx.test(email);
+};
 
-  return true;
+const validatePhoneNumber = phoneNumber => {
+  const regExIdentifier = /^\+62/;
+  phoneNumber = phoneNumber.replace(regExIdentifier, "0");
+  const regEx = /^[0]+\d{9,12}$/;
+
+  return regEx.test(phoneNumber);
 };
 
 const invalidPassword = password => {
@@ -121,9 +202,12 @@ export {
   randomString,
   removeDuplicates,
   invalidUserName,
-  invalidEmail,
+  validateEmail,
+  validatePhoneNumber,
   invalidPassword,
   renderClassName,
   renderStyle,
-  offset
+  offset,
+  sort,
+  useMedia
 };

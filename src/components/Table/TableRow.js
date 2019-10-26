@@ -12,7 +12,8 @@ const useStyles = createUseStyles({
   tableCell: {
     padding: "16px 40px 16px 16px",
     borderBottom: "1px solid #DDDDDD",
-    color: "gray"
+    color: "gray",
+    whiteSpace: "nowrap"
   },
   inactiveRow: {
     opacity: 0.2,
@@ -102,16 +103,22 @@ const TableRow = props => {
   };
 
   const renderTextInputValue = (row = null, column) => {
-    if (inputValue[column.key]) {
+    if (
+      inputValue[column.key] ||
+      inputValue[column.key] === "" ||
+      inputValue[column.key] === 0
+    ) {
       return inputValue[column.key];
     } else if (row) {
-      return row[column.key];
+      return column.type === "date"
+        ? format(new Date(row[column.key]), "yyyy-MM-dd")
+        : row[column.key];
     }
     return "";
   };
 
   const renderSelectValue = (row = null, column) => {
-    if (inputValue[column.key]) {
+    if (inputValue[column.key] !== undefined) {
       if (typeof inputValue[column.key] === "string") {
         return inputValue[column.key];
       }
@@ -133,6 +140,7 @@ const TableRow = props => {
       <TableAction
         {...tableAction}
         row={row}
+        columns={columns}
         actions={actions}
         active={row ? row.tableData === activeRow : activeRow === "new"}
         editable={
@@ -148,27 +156,41 @@ const TableRow = props => {
         }
       />
       {row && row.tableData !== activeRow ? (
-        columns.map(column => (
+        columns.map((column, index) => (
           <td
-            key={`${row.tableData}${column.key}`}
+            key={`${row.tableData}-${column.key}-${index}`}
             className={renderClassName(
               classes.tableCell,
               classNameOptions && classNameOptions.root
             )}
             style={renderStyle(styleOptions && styleOptions.root)}
           >
-            <Text
-              variant="caption"
-              align={column.type === "numeric" ? "right" : "left"}
-              color="currentColor"
-            >
-              {row[column.key] && column.type === "date"
-                ? format(
-                    new Date(row[column.key]),
-                    column.format ? column.format : "dd MMMM yyyy"
-                  )
-                : row[column.key]}
-            </Text>
+            {column.render ? (
+              column.render(row)
+            ) : (
+              <Text
+                variant="caption"
+                align={column.type === "numeric" ? "right" : "left"}
+                display="block"
+                color="currentColor"
+                noMargin
+              >
+                {row[column.key] && column.type === "date"
+                  ? format(
+                      new Date(row[column.key]),
+                      column.format ? column.format : "dd MMMM yyyy"
+                    )
+                  : column.type === "numeric" && column.currency
+                  ? Number(row[column.key]).toLocaleString(
+                      column.currency.countryId,
+                      {
+                        style: "currency",
+                        currency: column.currency.currencyCode
+                      }
+                    )
+                  : row[column.key]}
+              </Text>
+            )}
           </td>
         ))
       ) : activeRow ? (
@@ -184,16 +206,47 @@ const TableRow = props => {
             Are you sure want to delete this data?
           </td>
         ) : actionType === "edit" || activeRow === "new" ? (
-          columns.map(column => (
+          columns.map((column, index) => (
             <td
-              key={row ? `${row.tableData}-${column.key}` : `new-${column.key}`}
+              key={
+                row
+                  ? `${row.tableData}-${column.key}-${index}`
+                  : `new-${column.key}-${index}`
+              }
               className={renderClassName(
                 classes.tableCell,
                 classNameOptions && classNameOptions.root
               )}
               style={renderStyle(styleOptions && styleOptions.root)}
             >
-              {column.type === "select" ? (
+              {column.readonly ? (
+                column.render ? (
+                  column.render(row)
+                ) : (
+                  <Text
+                    variant="caption"
+                    align={column.type === "numeric" ? "right" : "left"}
+                    display="block"
+                    color="currentColor"
+                    noMargin
+                  >
+                    {row[column.key] && column.type === "date"
+                      ? format(
+                          new Date(row[column.key]),
+                          column.format ? column.format : "dd MMMM yyyy"
+                        )
+                      : column.type === "numeric" && column.currency
+                      ? Number(row[column.key]).toLocaleString(
+                          column.currency.countryId,
+                          {
+                            style: "currency",
+                            currency: column.currency.currencyCode
+                          }
+                        )
+                      : row[column.key]}
+                  </Text>
+                )
+              ) : column.type === "select" ? (
                 <Select
                   options={Object.entries(column.option).map(option => ({
                     value: option[0],
@@ -207,10 +260,19 @@ const TableRow = props => {
                   )}
                   style={renderStyle(styleOptions && styleOptions.input)}
                   noMargin
+                  fullWidth
                 />
               ) : (
                 <TextInput
-                  type={column.type === "numeric" ? "number" : "text"}
+                  type={
+                    column.type === "numeric"
+                      ? "number"
+                      : column.type === "file"
+                      ? "file"
+                      : column.type === "date"
+                      ? "date"
+                      : "text"
+                  }
                   value={renderTextInputValue(row, column)}
                   placeholder={column.label}
                   onChange={e => handleChange(column.key, e.target.value)}
@@ -219,6 +281,7 @@ const TableRow = props => {
                   )}
                   style={renderStyle(styleOptions && styleOptions.input)}
                   noMargin
+                  fullWidth
                 />
               )}
             </td>
@@ -239,9 +302,15 @@ TableRow.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       key: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(["numeric", "select", "date"]),
+      type: PropTypes.oneOf(["numeric", "select", "date", "file"]),
       option: PropTypes.object,
       format: PropTypes.string,
+      children: PropTypes.arrayOf(PropTypes.string),
+      render: PropTypes.func,
+      currency: PropTypes.shape({
+        countryId: PropTypes.string.isRequired,
+        currencyCode: PropTypes.string.isRequired
+      }),
       styleOptions: PropTypes.shape({
         head: PropTypes.object,
         cell: PropTypes.object
@@ -252,7 +321,7 @@ TableRow.propTypes = {
     PropTypes.shape({
       component: PropTypes.oneOf(["Button", "IconButton"]),
       variant: PropTypes.oneOf(["contained", "outlined", "text"]),
-      href: PropTypes.string,
+      href: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
       icon: PropTypes.element,
       label: PropTypes.any,
       onClick: PropTypes.func

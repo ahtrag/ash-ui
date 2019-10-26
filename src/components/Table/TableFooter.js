@@ -17,7 +17,8 @@ const useStyles = createUseStyles({
     padding: 16,
     display: "flex",
     justifyContent: "flex-end",
-    alignItems: "center"
+    alignItems: "center",
+    flexWrap: "wrap"
   },
   footerRowsText: {
     marginRight: 12
